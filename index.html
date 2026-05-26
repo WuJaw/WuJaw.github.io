@@ -11,11 +11,68 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F5F5F5;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: #E5E5E5;
+            --accent: #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0A0A0A;
+            --bg-secondary: #1A1A1A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --text-muted: #707070;
+            --border-color: #2A2A2A;
+            --accent: #FFFFFF;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            background: #FFFFFF;
-            color: #000000;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             overflow-x: hidden;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        /* 粒子背景 */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--text-muted);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         /* ========== 导航 ========== */
@@ -28,25 +85,91 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.9);
-            border-bottom: 1px solid #E5E5E5;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        nav.scrolled {
+            padding: 15px 50px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
 
         nav .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #000;
+            color: var(--text-primary);
+            transition: transform 0.3s;
+        }
+
+        nav .logo:hover {
+            transform: scale(1.05);
+        }
+
+        nav .links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
         }
 
         nav .links a {
-            color: #666;
+            color: var(--text-secondary);
             text-decoration: none;
-            margin-left: 30px;
             transition: color 0.3s;
+            position: relative;
+        }
+
+        nav .links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
         }
 
         nav .links a:hover {
-            color: #000;
+            color: var(--text-primary);
+        }
+
+        nav .links a:hover::after {
+            width: 100%;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle::before {
+            content: '☀️';
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            content: '🌙';
+            transform: translateX(22px);
         }
 
         /* ========== 英雄区 ========== */
@@ -59,24 +182,31 @@
             align-items: center;
             text-align: center;
             z-index: 1;
+            background: linear-gradient(135deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.05) 100%);
+        }
+
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
         }
 
         .hero h1 {
             font-size: 4rem;
             margin-bottom: 10px;
             animation: fadeInUp 1s ease;
-            color: #000;
+            color: var(--text-primary);
+            letter-spacing: -2px;
         }
 
         .hero h1 span {
-            color: #333;
+            color: var(--text-secondary);
         }
 
         .hero .subtitle {
             font-size: 1.3rem;
-            color: #999;
+            color: var(--text-muted);
             margin-bottom: 40px;
             animation: fadeInUp 1s ease 0.3s both;
+            letter-spacing: 3px;
         }
 
         .hero .btn-group {
@@ -85,42 +215,69 @@
 
         .hero .btn {
             display: inline-block;
-            padding: 12px 35px;
+            padding: 14px 40px;
             margin: 0 10px;
             border-radius: 50px;
             text-decoration: none;
             font-size: 1rem;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .hero .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
-            background: #000;
-            color: #fff;
+            background: var(--accent);
+            color: var(--bg-primary);
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
         }
 
         .btn-secondary {
-            border: 2px solid #000;
-            color: #000;
+            border: 2px solid var(--accent);
+            color: var(--accent);
             background: transparent;
         }
 
         .btn-secondary:hover {
-            background: #000;
-            color: #fff;
+            background: var(--accent);
+            color: var(--bg-primary);
+            transform: translateY(-3px);
         }
 
-        /* ========== 滚动提示 ========== */
+        /* 滚动提示 */
         .scroll-hint {
             position: absolute;
             bottom: 40px;
             animation: bounce 2s infinite;
             font-size: 2rem;
-            color: #ccc;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .scroll-hint:hover {
+            transform: scale(1.2);
         }
 
         @keyframes bounce {
@@ -143,123 +300,182 @@
         section {
             position: relative;
             z-index: 1;
-            padding: 100px 50px;
-            max-width: 1000px;
+            padding: 120px 50px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
         section h2 {
-            font-size: 2.2rem;
-            margin-bottom: 50px;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
             text-align: center;
-            color: #000;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
         }
 
         /* ========== 关于我 ========== */
         .about-content {
             display: flex;
             align-items: center;
-            gap: 50px;
+            gap: 60px;
+            animation: fadeInUp 0.8s ease;
         }
 
         .avatar {
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
-            background: #f0f0f0;
+            background: var(--bg-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 5rem;
+            font-size: 6rem;
             flex-shrink: 0;
+            border: 4px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .avatar:hover {
+            transform: rotate(5deg) scale(1.05);
+            border-color: var(--accent);
         }
 
         .about-text p {
-            line-height: 1.8;
-            color: #666;
-            font-size: 1.05rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .about-text strong {
+            color: var(--text-primary);
         }
 
         /* ========== 技能 ========== */
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 25px;
         }
 
         .skill-card {
-            background: #fff;
-            border: 1px solid #E5E5E5;
-            border-radius: 15px;
-            padding: 30px 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px 20px;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
         }
 
         .skill-card:hover {
-            transform: translateY(-5px);
-            border-color: #000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .skill-card .icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .skill-card:hover .icon {
+            transform: scale(1.2) rotate(10deg);
         }
 
         .skill-card .name {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 5px;
-            color: #000;
+            margin-bottom: 10px;
+            color: var(--text-primary);
         }
 
         .skill-card .level {
-            color: #999;
-            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         /* ========== 项目 ========== */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
         }
 
         .project-card {
-            background: #fff;
-            border: 1px solid #E5E5E5;
-            border-radius: 15px;
-            padding: 30px;
-            transition: all 0.3s;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .project-card:hover::before {
+            left: 100%;
         }
 
         .project-card:hover {
-            transform: translateY(-5px);
-            border-color: #000;
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
         }
 
         .project-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #000;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-primary);
         }
 
         .project-card p {
-            color: #888;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
         }
 
         .project-card .tag {
             display: inline-block;
-            background: #f0f0f0;
-            color: #666;
-            padding: 4px 12px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            padding: 6px 15px;
             border-radius: 20px;
-            font-size: 0.8rem;
-            margin-top: 15px;
-            margin-right: 5px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .project-card:hover .tag {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
         }
 
         /* ========== 联系 ========== */
@@ -267,40 +483,49 @@
             text-align: center;
         }
 
+        .contact p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
         .contact .social-links {
-            margin-top: 30px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
 
         .contact .social-links a {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 55px;
-            height: 55px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
-            background: #f0f0f0;
-            border: 1px solid #E5E5E5;
-            margin: 0 10px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
             text-decoration: none;
-            font-size: 1.5rem;
-            transition: all 0.3s;
+            font-size: 1.8rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .contact .social-links a:hover {
-            background: #000;
-            border-color: #000;
-            transform: translateY(-3px);
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-8px) rotate(360deg);
         }
 
         /* ========== 页脚 ========== */
         footer {
             text-align: center;
             padding: 40px;
-            color: #999;
-            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
             position: relative;
             z-index: 1;
-            border-top: 1px solid #E5E5E5;
+            border-top: 1px solid var(--border-color);
+            transition: all 0.4s;
         }
 
         /* ========== 响应式 ========== */
@@ -308,27 +533,83 @@
             nav {
                 padding: 15px 20px;
             }
+
+            nav .links {
+                gap: 15px;
+            }
+
             nav .links a {
-                margin-left: 15px;
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                margin-left: 10px;
             }
+
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
+
             .hero .subtitle {
                 font-size: 1rem;
             }
+
+            .hero .btn {
+                padding: 12px 30px;
+                margin: 5px;
+                font-size: 0.9rem;
+            }
+
             .about-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 30px;
             }
+
+            .avatar {
+                width: 180px;
+                height: 180px;
+                font-size: 5rem;
+            }
+
             section {
-                padding: 60px 20px;
+                padding: 80px 20px;
             }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 15px;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact .social-links a {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* 滚动动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body>
+
+<!-- 粒子背景 -->
+<div id="particles"></div>
 
 <!-- 导航 -->
 <nav>
@@ -338,22 +619,23 @@
         <a href="#skills">技能</a>
         <a href="#projects">项目</a>
         <a href="#contact">联系</a>
+        <div class="theme-toggle" onclick="toggleTheme()"></div>
     </div>
 </nav>
 
 <!-- 英雄区 -->
 <section class="hero">
-    <h1>Wu-X</h1>
+    <h1>Wu-<span>X</span></h1>
     <p class="subtitle">just as well</p>
     <div class="btn-group">
         <a href="#projects" class="btn btn-primary">看看我的作品</a>
         <a href="#contact" class="btn btn-secondary">联系我</a>
     </div>
-    <div class="scroll-hint">↓</div>
+    <div class="scroll-hint" onclick="document.querySelector('#about').scrollIntoView({behavior:'smooth'})">↓</div>
 </section>
 
 <!-- 关于我 -->
-<section id="about">
+<section id="about" class="fade-in">
     <h2>关于我</h2>
     <div class="about-content">
         <div class="avatar">🐱</div>
@@ -362,14 +644,14 @@
                 嗨！我是 Wu-X 👋<br><br>
                 以前叫 Tom（那只被 Jerry 耍的猫 😂），现在是 Wu-X。<br>
                 just as well，亦可，都行。<br><br>
-                <strong>座右铭：</strong>Stay hungry, stay foolish.
+                <strong>座右铭：</strong>Stay hungry, stay foolish. 🚀
             </p>
         </div>
     </div>
 </section>
 
 <!-- 技能 -->
-<section id="skills">
+<section id="skills" class="fade-in">
     <h2>技能</h2>
     <div class="skills-grid">
         <div class="skill-card">
@@ -378,7 +660,7 @@
             <div class="level">HTML / CSS / JS / Vue</div>
         </div>
         <div class="skill-card">
-            <div class="icon">&</div>
+            <div class="icon">⚡</div>
             <div class="name">后端开发</div>
             <div class="level">Python / Node.js / Go</div>
         </div>
@@ -406,35 +688,38 @@
 </section>
 
 <!-- 项目 -->
-<section id="projects">
+<section id="projects" class="fade-in">
     <h2>项目</h2>
     <div class="projects-grid">
         <div class="project-card">
             <h3>📂 个人博客系统</h3>
-            <p>基于 Hexo + GitHub Pages 搭建的个人博客，支持 Markdown 写作、全白主题。</p>
+            <p>基于 Hexo + GitHub Pages 搭建的个人博客，支持 Markdown 写作、全白主题，性能拉满 ⚡</p>
             <span class="tag">Hexo</span>
             <span class="tag">Node.js</span>
+            <span class="tag">GitHub</span>
         </div>
         <div class="project-card">
             <h3>🤖 AI 聊天机器人</h3>
-            <p>接入 GPT API 的智能聊天助手，支持上下文记忆、多轮对话。</p>
+            <p>接入 GPT API 的智能聊天助手，支持上下文记忆、多轮对话，让 AI 懂你 🧠</p>
             <span class="tag">Python</span>
             <span class="tag">OpenAI</span>
+            <span class="tag">FastAPI</span>
         </div>
         <div class="project-card">
             <h3>📊 数据可视化看板</h3>
-            <p>实时展示服务器监控数据，包含 CPU、内存、网络流量等指标。</p>
+            <p>实时展示服务器监控数据，包含 CPU、内存、网络流量等指标，一目了然 📈</p>
             <span class="tag">Vue3</span>
             <span class="tag">ECharts</span>
+            <span class="tag">WebSocket</span>
         </div>
     </div>
 </section>
 
 <!-- 联系 -->
-<section id="contact" class="contact">
+<section id="contact" class="contact fade-in">
     <h2>联系我</h2>
-    <p style="color:#888; margin-bottom: 10px;">有任何想法或合作？随时找我聊聊 💬</p>
-    <p style="color:#999; margin-bottom: 20px;">📧 wux@email.com</p>
+    <p>有任何想法或合作？随时找我聊聊 💬</p>
+    <p style="color: var(--text-muted); margin-bottom: 30px;">📧 wux@email.com</p>
     <div class="social-links">
         <a href="https://github.com/Wu-X" title="GitHub">🐙</a>
         <a href="#" title="微信">💬</a>
@@ -445,19 +730,75 @@
 
 <!-- 页脚 -->
 <footer>
-    <p>© 2025 Wu-X | just as well | 亦可，都行</p>
+    <p>© 2025 Wu-X | just as well | 亦可，都行 ✨</p>
 </footer>
 
-<!-- 平滑滚动 -->
 <script>
+    // 粒子背景
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = Math.random() * 4 + 2 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = Math.random() * 15 + 10 + 's';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(particle);
+        }
+    }
+    createParticles();
+
+    // 主题切换
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // 加载保存的主题
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // 平滑滚动
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
         });
     });
+
+    // 导航栏滚动效果
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+
+    // 滚动动画
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 </script>
 
 </body>

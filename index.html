@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>你的名字 | 个人主页</title>
+    <title>Wu-X | just as well</title>
     <style>
         * {
             margin: 0;
@@ -13,19 +13,9 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
+            background: #FFFFFF;
+            color: #000000;
             overflow-x: hidden;
-        }
-
-        /* ========== 粒子背景 ========== */
-        #particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
         }
 
         /* ========== 导航 ========== */
@@ -38,27 +28,25 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(10, 10, 10, 0.7);
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #E5E5E5;
         }
 
         nav .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #000;
         }
 
         nav .links a {
-            color: #aaa;
+            color: #666;
             text-decoration: none;
             margin-left: 30px;
             transition: color 0.3s;
         }
 
         nav .links a:hover {
-            color: #00d2ff;
+            color: #000;
         }
 
         /* ========== 英雄区 ========== */
@@ -77,17 +65,16 @@
             font-size: 4rem;
             margin-bottom: 10px;
             animation: fadeInUp 1s ease;
+            color: #000;
         }
 
         .hero h1 span {
-            background: linear-gradient(135deg, #00d2ff, #7b2ff7, #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #333;
         }
 
         .hero .subtitle {
             font-size: 1.3rem;
-            color: #888;
+            color: #999;
             margin-bottom: 40px;
             animation: fadeInUp 1s ease 0.3s both;
         }
@@ -107,23 +94,24 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            background: #000;
             color: #fff;
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(123, 47, 247, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .btn-secondary {
-            border: 2px solid #333;
-            color: #ccc;
+            border: 2px solid #000;
+            color: #000;
+            background: transparent;
         }
 
         .btn-secondary:hover {
-            border-color: #00d2ff;
-            color: #00d2ff;
+            background: #000;
+            color: #fff;
         }
 
         /* ========== 滚动提示 ========== */
@@ -132,7 +120,7 @@
             bottom: 40px;
             animation: bounce 2s infinite;
             font-size: 2rem;
-            color: #555;
+            color: #ccc;
         }
 
         @keyframes bounce {
@@ -164,12 +152,7 @@
             font-size: 2.2rem;
             margin-bottom: 50px;
             text-align: center;
-        }
-
-        section h2 span {
-            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #000;
         }
 
         /* ========== 关于我 ========== */
@@ -183,7 +166,7 @@
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            background: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -193,7 +176,7 @@
 
         .about-text p {
             line-height: 1.8;
-            color: #aaa;
+            color: #666;
             font-size: 1.05rem;
         }
 
@@ -205,8 +188,8 @@
         }
 
         .skill-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: #fff;
+            border: 1px solid #E5E5E5;
             border-radius: 15px;
             padding: 30px 20px;
             text-align: center;
@@ -215,8 +198,8 @@
 
         .skill-card:hover {
             transform: translateY(-5px);
-            border-color: #00d2ff;
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.1);
+            border-color: #000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
 
         .skill-card .icon {
@@ -228,10 +211,11 @@
             font-size: 1.1rem;
             font-weight: bold;
             margin-bottom: 5px;
+            color: #000;
         }
 
         .skill-card .level {
-            color: #666;
+            color: #999;
             font-size: 0.85rem;
         }
 
@@ -243,8 +227,8 @@
         }
 
         .project-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: #fff;
+            border: 1px solid #E5E5E5;
             border-radius: 15px;
             padding: 30px;
             transition: all 0.3s;
@@ -252,12 +236,13 @@
 
         .project-card:hover {
             transform: translateY(-5px);
-            border-color: #7b2ff7;
+            border-color: #000;
         }
 
         .project-card h3 {
             font-size: 1.3rem;
             margin-bottom: 10px;
+            color: #000;
         }
 
         .project-card p {
@@ -268,8 +253,8 @@
 
         .project-card .tag {
             display: inline-block;
-            background: rgba(123, 47, 247, 0.15);
-            color: #7b2ff7;
+            background: #f0f0f0;
+            color: #666;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -293,8 +278,8 @@
             width: 55px;
             height: 55px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #f0f0f0;
+            border: 1px solid #E5E5E5;
             margin: 0 10px;
             text-decoration: none;
             font-size: 1.5rem;
@@ -302,8 +287,8 @@
         }
 
         .contact .social-links a:hover {
-            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
-            border-color: transparent;
+            background: #000;
+            border-color: #000;
             transform: translateY(-3px);
         }
 
@@ -311,10 +296,11 @@
         footer {
             text-align: center;
             padding: 40px;
-            color: #444;
+            color: #999;
             font-size: 0.9rem;
             position: relative;
             z-index: 1;
+            border-top: 1px solid #E5E5E5;
         }
 
         /* ========== 响应式 ========== */
@@ -344,12 +330,9 @@
 </head>
 <body>
 
-<!-- 粒子背景 -->
-<canvas id="particles"></canvas>
-
 <!-- 导航 -->
 <nav>
-    <div class="logo">YourName</div>
+    <div class="logo">Wu-X</div>
     <div class="links">
         <a href="#about">关于</a>
         <a href="#skills">技能</a>
@@ -360,8 +343,8 @@
 
 <!-- 英雄区 -->
 <section class="hero">
-    <h1>你好，我是 <span>你的名字</span></h1>
-    <p class="subtitle">🚀 程序员 / 设计师 / 终身学习者</p>
+    <h1>Wu-X</h1>
+    <p class="subtitle">just as well</p>
     <div class="btn-group">
         <a href="#projects" class="btn btn-primary">看看我的作品</a>
         <a href="#contact" class="btn btn-secondary">联系我</a>
@@ -371,15 +354,15 @@
 
 <!-- 关于我 -->
 <section id="about">
-    <h2>关于 <span>我</span></h2>
+    <h2>关于我</h2>
     <div class="about-content">
-        <div class="avatar">😎</div>
+        <div class="avatar">🐱</div>
         <div class="about-text">
             <p>
-                嗨！我是一个热爱技术的开发者 👋<br><br>
-                喜欢用代码创造有趣的东西，热衷于探索新技术。<br>
-                工作之余喜欢折腾开源项目、写博客、打游戏。<br><br>
-                <strong style="color:#00d2ff;">座右铭：</strong>Stay hungry, stay foolish.
+                嗨！我是 Wu-X 👋<br><br>
+                以前叫 Tom（那只被 Jerry 耍的猫 😂），现在是 Wu-X。<br>
+                just as well，亦可，都行。<br><br>
+                <strong>座右铭：</strong>Stay hungry, stay foolish.
             </p>
         </div>
     </div>
@@ -387,7 +370,7 @@
 
 <!-- 技能 -->
 <section id="skills">
-    <h2>我的 <span>技能</span></h2>
+    <h2>技能</h2>
     <div class="skills-grid">
         <div class="skill-card">
             <div class="icon">🌐</div>
@@ -424,23 +407,23 @@
 
 <!-- 项目 -->
 <section id="projects">
-    <h2>我的 <span>项目</span></h2>
+    <h2>项目</h2>
     <div class="projects-grid">
         <div class="project-card">
-            <h3>📂 项目一：个人博客系统</h3>
-            <p>基于 Hexo + GitHub Pages 搭建的个人博客，支持 Markdown 写作、暗黑主题、评论系统。</p>
+            <h3>📂 个人博客系统</h3>
+            <p>基于 Hexo + GitHub Pages 搭建的个人博客，支持 Markdown 写作、全白主题。</p>
             <span class="tag">Hexo</span>
             <span class="tag">Node.js</span>
         </div>
         <div class="project-card">
-            <h3>🤖 项目二：AI 聊天机器人</h3>
-            <p>接入 GPT API 的智能聊天助手，支持上下文记忆、多轮对话、自定义人格。</p>
+            <h3>🤖 AI 聊天机器人</h3>
+            <p>接入 GPT API 的智能聊天助手，支持上下文记忆、多轮对话。</p>
             <span class="tag">Python</span>
             <span class="tag">OpenAI</span>
         </div>
         <div class="project-card">
-            <h3>📊 项目三：数据可视化看板</h3>
-            <p>实时展示服务器监控数据，包含 CPU、内存、网络流量等指标的动态图表。</p>
+            <h3>📊 数据可视化看板</h3>
+            <p>实时展示服务器监控数据，包含 CPU、内存、网络流量等指标。</p>
             <span class="tag">Vue3</span>
             <span class="tag">ECharts</span>
         </div>
@@ -449,11 +432,11 @@
 
 <!-- 联系 -->
 <section id="contact" class="contact">
-    <h2>联系 <span>我</span></h2>
+    <h2>联系我</h2>
     <p style="color:#888; margin-bottom: 10px;">有任何想法或合作？随时找我聊聊 💬</p>
-    <p style="color:#555; margin-bottom: 20px;">📧 yourname@email.com</p>
+    <p style="color:#999; margin-bottom: 20px;">📧 wux@email.com</p>
     <div class="social-links">
-        <a href="#" title="GitHub">🐙</a>
+        <a href="https://github.com/Wu-X" title="GitHub">🐙</a>
         <a href="#" title="微信">💬</a>
         <a href="#" title="Bilibili">📺</a>
         <a href="#" title="Twitter">🐦</a>
@@ -462,79 +445,11 @@
 
 <!-- 页脚 -->
 <footer>
-    <p>© 2025 你的名字 | 用 ❤️ 和 ☕ 构建 | Powered by Gitee Pages</p>
+    <p>© 2025 Wu-X | just as well | 亦可，都行</p>
 </footer>
 
-<!-- 粒子动画 JS -->
+<!-- 平滑滚动 -->
 <script>
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 0.5;
-            this.speedX = (Math.random() - 0.5) * 0.5;
-            this.speedY = (Math.random() - 0.5) * 0.5;
-            this.opacity = Math.random() * 0.5 + 0.1;
-        }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-        }
-        draw() {
-            ctx.fillStyle = `rgba(0, 210, 255, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    for (let i = 0; i < 80; i++) {
-        particles.push(new Particle());
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-
-        // 连线
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 120) {
-                    ctx.strokeStyle = `rgba(123, 47, 247, ${0.1 * (1 - dist / 120)})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-        requestAnimationFrame(animate);
-    }
-    animate();
-
-    // 平滑滚动
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();

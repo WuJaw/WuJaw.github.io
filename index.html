@@ -2,19 +2,23 @@
 layout: default
 title: 文章
 ---
+<div class="search-box">
+  <input type="text" class="search-input" id="search" placeholder="搜索文章..." autofocus>
+</div>
+
 <div class="category-index">
   {% assign sorted_cats = site.categories | sort %}
   {% for category in sorted_cats %}
     {% assign cat_name = category[0] %}
     {% assign cat_posts = category[1] | sort: "date" | reverse %}
-  <div class="cat-card">
+  <div class="cat-card" data-category="{{ cat_name | escape }}">
     <div class="cat-card-header">
       <span class="cat-name">{{ cat_name }}</span>
       <span class="cat-count">{{ cat_posts | size }} 篇</span>
     </div>
     <ul class="cat-articles">
       {% for post in cat_posts %}
-      <li>
+      <li data-title="{{ post.title | escape }}" data-category="{{ cat_name | escape }}">
         <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         <span class="cat-date">{{ post.date | date: "%Y-%m-%d" }}</span>
       </li>
@@ -23,3 +27,37 @@ title: 文章
   </div>
   {% endfor %}
 </div>
+
+<script>
+(function() {
+  var input = document.getElementById('search');
+  var cards = document.querySelectorAll('.cat-card');
+  var items = document.querySelectorAll('.cat-articles li');
+
+  function filter() {
+    var q = input.value.trim().toLowerCase();
+
+    items.forEach(function(item) {
+      var title = (item.getAttribute('data-title') || '').toLowerCase();
+      var cat = (item.getAttribute('data-category') || '').toLowerCase();
+      if (!q || title.indexOf(q) >= 0 || cat.indexOf(q) >= 0) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+
+    // 隐藏空分类卡片
+    cards.forEach(function(card) {
+      var visible = card.querySelectorAll('.cat-articles li:not(.hidden)');
+      if (visible.length === 0) {
+        card.classList.add('hidden');
+      } else {
+        card.classList.remove('hidden');
+      }
+    });
+  }
+
+  input.addEventListener('input', filter);
+})();
+</script>

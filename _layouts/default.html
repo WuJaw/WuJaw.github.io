@@ -62,6 +62,37 @@
     padding: 60px 20px 40px;
   }
 
+  /* ========== 搜索框 ========== */
+  .search-box {
+    margin-bottom: var(--space-xl);
+  }
+
+  .search-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--fs-body);
+    font-family: inherit;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-input:focus {
+    border-color: var(--quiet);
+  }
+
+  .search-input::placeholder {
+    color: var(--quiet);
+  }
+
+  .cat-card.hidden,
+  .cat-articles li.hidden {
+    display: none;
+  }
+
   /* ========== 分类索引页 ========== */
   .category-index {
     display: flex;

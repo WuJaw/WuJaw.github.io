@@ -2,7 +2,7 @@
 
 ## 博客结构
 
-已于 2026-05-27 启用 Jekyll，目录结构：
+已于 2026-05-27 启用 Jekyll，当前为单页结构（分类索引即首页）：
 
 ```
 WuJaw.github.io/
@@ -12,9 +12,10 @@ WuJaw.github.io/
 │   └── post.html        # 文章布局
 ├── _posts/              # Markdown 文章放这里
 ├── posts/               # 旧 HTML 文章（保留）
-├── index.html           # 首页（Liquid 自动列出文章）
-└── about.html           # 关于页
+└── index.html           # 首页（分类卡片视图）
 ```
+
+已删除：`articles.html`、`about.html`。导航栏只保留主题切换按钮。
 
 ## 写文章规范
 

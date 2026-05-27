@@ -182,6 +182,78 @@
     margin-top: 2px;
   }
 
+  /* ========== 分类索引页 ========== */
+  .category-index {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  .cat-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .cat-card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--soft);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cat-name {
+    font-size: var(--fs-h3);
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .cat-count {
+    font-size: var(--fs-meta);
+    color: var(--quiet);
+  }
+
+  .cat-articles {
+    list-style: none;
+    padding: var(--space-sm) 0;
+  }
+
+  .cat-articles li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-lg);
+  }
+
+  .cat-articles li:hover {
+    background: var(--soft);
+  }
+
+  .cat-articles a {
+    color: var(--body);
+    text-decoration: none;
+    font-size: var(--fs-body);
+    transition: color 0.15s;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cat-articles a:hover {
+    color: var(--ink);
+  }
+
+  .cat-date {
+    color: var(--quiet);
+    font-size: var(--fs-meta);
+    flex-shrink: 0;
+    margin-left: var(--space-md);
+  }
+
   /* ========== 文章详情页 ========== */
   .post-header {
     margin-bottom: var(--space-xl);
@@ -378,6 +450,7 @@
 
 <nav class="site-nav">
   <a href="{{ site.baseurl }}/" {% if page.url == "/" or page.layout == "post" %}class="active"{% endif %}>文章</a>
+  <a href="{{ site.baseurl }}/articles.html" {% if page.url == "/articles.html" %}class="active"{% endif %}>分类</a>
   <a href="{{ site.baseurl }}/about.html" {% if page.url == "/about.html" %}class="active"{% endif %}>关于</a>
   <button class="theme-toggle" id="theme-toggle" aria-label="切换主题" title="切换亮色 / 暗色模式">🌙</button>
 </nav>

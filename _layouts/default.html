@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if page.title %}{{ page.title }} | Wu-X{% else %}Wu-X{% endif %}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #fff;
+    color: #333;
+    line-height: 1.8;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  header .tagline {
+    color: #999;
+    font-size: 1rem;
+    margin-top: 8px;
+  }
+  nav {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  nav a {
+    color: #666;
+    text-decoration: none;
+    margin: 0 16px;
+    font-size: 0.95rem;
+  }
+  nav a:hover {
+    color: #000;
+    text-decoration: underline;
+  }
+  /* 首页文章列表 */
+  .post-list {
+    list-style: none;
+  }
+  .post-item {
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .post-item:last-child {
+    border-bottom: none;
+  }
+  .post-item a {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+  }
+  .post-item a:hover {
+    color: #000;
+    text-decoration: underline;
+  }
+  .post-item .date {
+    display: block;
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  /* 文章正文 */
+  .post-content {
+    font-size: 1.05rem;
+  }
+  .post-content h1,
+  .post-content h2,
+  .post-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+    color: #111;
+  }
+  .post-content h1 { font-size: 1.7rem; }
+  .post-content h2 { font-size: 1.35rem; }
+  .post-content h3 { font-size: 1.15rem; }
+  .post-content p {
+    margin-bottom: 1rem;
+  }
+  .post-content ul,
+  .post-content ol {
+    margin: 0.5rem 0 1rem 1.5rem;
+  }
+  .post-content li {
+    margin-bottom: 0.3rem;
+  }
+  .post-content code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  .post-content pre {
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
+  .post-content pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.88rem;
+  }
+  .post-content blockquote {
+    border-left: 3px solid #ddd;
+    padding-left: 1rem;
+    color: #777;
+    margin: 1rem 0;
+  }
+  .post-content img {
+    max-width: 100%;
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
+  .post-content hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 2rem 0;
+  }
+  .post-content a {
+    color: #333;
+    text-decoration: underline;
+  }
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+  .post-content th,
+  .post-content td {
+    border: 1px solid #eee;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .post-content th {
+    background: #f9f9f9;
+    font-weight: 600;
+  }
+  /* 关于页 */
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    margin: 0 auto 30px;
+  }
+  .content {
+    font-size: 1.05rem;
+  }
+  .content p {
+    margin-bottom: 16px;
+  }
+  /* 文章标题区 */
+  .post-header {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  .post-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 8px;
+  }
+  .post-header .post-meta {
+    color: #999;
+    font-size: 0.88rem;
+  }
+  footer {
+    margin-top: 80px;
+    text-align: center;
+    color: #bbb;
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1><a href="{{ site.baseurl }}/" style="text-decoration:none;color:inherit;">Wu-X</a></h1>
+  <p class="tagline">just as well</p>
+</header>
+
+<nav>
+  <a href="{{ site.baseurl }}/">文章</a>
+  <a href="{{ site.baseurl }}/about.html">关于</a>
+</nav>
+
+{{ content }}
+
+<footer>
+  &copy; 2025 Wu-X
+</footer>
+</body>
+</html>

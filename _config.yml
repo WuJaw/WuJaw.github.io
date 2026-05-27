@@ -1,0 +1,23 @@
+title: Wu-X
+description: just as well
+baseurl: ""
+url: "https://wujaw.github.io"
+
+# Markdown 渲染
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+# 文章 URL 格式：/posts/文章标题/
+permalink: /posts/:title/
+
+# 排除不需要编译的文件
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+
+# 插件（GitHub Pages 支持）
+plugins:
+  - jekyll-feed

@@ -1,103 +1,12 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wu-X | just as well</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #fff;
-    color: #333;
-    line-height: 1.8;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 60px 20px;
-  }
-  header {
-    text-align: center;
-    margin-bottom: 60px;
-  }
-  header h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-  }
-  header .tagline {
-    color: #999;
-    font-size: 1rem;
-    margin-top: 8px;
-  }
-  nav {
-    margin-bottom: 40px;
-    text-align: center;
-  }
-  nav a {
-    color: #666;
-    text-decoration: none;
-    margin: 0 16px;
-    font-size: 0.95rem;
-  }
-  nav a:hover {
-    color: #000;
-    text-decoration: underline;
-  }
-  .post-list {
-    list-style: none;
-  }
-  .post-item {
-    padding: 20px 0;
-    border-bottom: 1px solid #eee;
-  }
-  .post-item:last-child {
-    border-bottom: none;
-  }
-  .post-item a {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #333;
-    text-decoration: none;
-  }
-  .post-item a:hover {
-    color: #000;
-    text-decoration: underline;
-  }
-  .post-item .date {
-    display: block;
-    color: #999;
-    font-size: 0.85rem;
-    margin-top: 4px;
-  }
-  footer {
-    margin-top: 80px;
-    text-align: center;
-    color: #bbb;
-    font-size: 0.85rem;
-  }
-</style>
-</head>
-<body>
-<header>
-  <h1>Wu-X</h1>
-  <p class="tagline">just as well</p>
-</header>
-
-<nav>
-  <a href="index.html">文章</a>
-  <a href="about.html">关于</a>
-</nav>
-
+---
+layout: default
+title: 文章
+---
 <ul class="post-list">
+  {% for post in site.posts %}
   <li class="post-item">
-    <a href="posts/蓝牙wifi版本床垫指示灯.html">蓝牙wifi版本床垫指示灯</a>
-    <span class="date">2025年</span>
+    <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+    <span class="date">{{ post.date | date: "%Y年%-m月%-d日" }}</span>
   </li>
-  <!-- 新文章在这里添加 -->
+  {% endfor %}
 </ul>
-
-<footer>
-  &copy; 2025 Wu-X
-</footer>
-</body>
-</html>

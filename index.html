@@ -2,11 +2,24 @@
 layout: default
 title: 文章
 ---
-<ul class="post-list">
-  {% for post in site.posts %}
-  <li class="post-item">
-    <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-    <span class="date">{{ post.date | date: "%Y年%-m月%-d日" }}</span>
-  </li>
+<div class="category-index">
+  {% assign sorted_cats = site.categories | sort %}
+  {% for category in sorted_cats %}
+    {% assign cat_name = category[0] %}
+    {% assign cat_posts = category[1] | sort: "date" | reverse %}
+  <div class="cat-card">
+    <div class="cat-card-header">
+      <span class="cat-name">{{ cat_name }}</span>
+      <span class="cat-count">{{ cat_posts | size }} 篇</span>
+    </div>
+    <ul class="cat-articles">
+      {% for post in cat_posts %}
+      <li>
+        <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        <span class="cat-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endfor %}
-</ul>
+</div>

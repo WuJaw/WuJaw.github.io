@@ -450,8 +450,8 @@
 
 <nav class="site-nav">
   <a href="{{ site.baseurl }}/" {% if page.url == "/" or page.layout == "post" %}class="active"{% endif %}>文章</a>
-  <a href="{{ site.baseurl }}/articles.html" {% if page.url == "/articles.html" %}class="active"{% endif %}>分类</a>
-  <a href="{{ site.baseurl }}/about.html" {% if page.url == "/about.html" %}class="active"{% endif %}>关于</a>
+  <a href="{{ site.baseurl }}/articles/" {% if page.url == "/articles/" %}class="active"{% endif %}>分类</a>
+  <a href="{{ site.baseurl }}/about/" {% if page.url == "/about/" %}class="active"{% endif %}>关于</a>
   <button class="theme-toggle" id="theme-toggle" aria-label="切换主题" title="切换亮色 / 暗色模式">🌙</button>
 </nav>
 

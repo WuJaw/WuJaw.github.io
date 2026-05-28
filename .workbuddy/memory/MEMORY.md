@@ -15,7 +15,7 @@ WuJaw.github.io/
 └── index.html           # 首页（分类卡片视图）
 ```
 
-已删除：`articles.html`、`about.html`。导航栏只保留主题切换按钮。
+已删除：`articles.html`、`about.html`。已移除页头 logo、页脚、导航栏、主题切换。
 
 ## 写文章规范
 
@@ -25,4 +25,8 @@ WuJaw.github.io/
 
 ## 设计风格
 
-白底简洁极简风，字体 -apple-system / PingFang SC / Microsoft YaHei，最大宽度 720px，全部样式集中在 `_layouts/default.html`。
+白底简洁极简风，字体 -apple-system / PingFang SC / Microsoft YaHei，最大宽度 720px，全部样式集中在 `_layouts/default.html`。已移除页头、页脚、导航栏和暗色模式。代码块含 Rouge 语法高亮（Tommorow Night Eighties 主题）。
+
+## 搜索功能
+
+首页顶部有纯前端搜索框，输入文字实时过滤文章标题和分类名，空分类卡片自动隐藏。

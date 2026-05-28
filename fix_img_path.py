@@ -1,8 +1,7 @@
 """
 博客图片路径自动替换脚本
-1. 将 Markdown 中的图片路径统一替换为 /assets/xxx.png 格式（Typora + Jekyll 通用）
-2. 自动添加 typora-root-url 到 front matter（如果没有的话）
-3. 如果图片不在 assets/ 目录，自动拷贝过来
+1. 将 Markdown 图片替换为 <img> 标签，Typora 和 Jekyll 都能正确显示
+2. 如果图片不在 assets/ 目录，自动拷贝过来
 
 用法：python fix_img_path.py [文件路径]
   - 不传参数：处理项目中所有 .md 文件
@@ -19,7 +18,6 @@ BLOG_ROOT = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BLOG_ROOT, 'assets')
 IMG_PATTERN = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
 IMG_EXTS = ('png', 'jpg', 'jpeg', 'gif', 'svg', 'webp')
-FRONT_MATTER = re.compile(r'^---\s*\n(.*?)\n---', re.DOTALL)
 
 
 def find_image(fname):
@@ -36,31 +34,12 @@ def find_image(fname):
     return None
 
 
-def add_typora_root_url(content):
-    """在 front matter 中添加 typora-root-url（如果没有）"""
-    match = FRONT_MATTER.match(content)
-    if not match:
-        return content
-
-    fm = match.group(1)
-    if 'typora-root-url' in fm:
-        return content
-
-    # 在 front matter 末尾添加
-    new_fm = fm.rstrip() + '\ntypora-root-url: ..\\..\n'
-    new_content = content[:match.start()] + '---\n' + new_fm + '---' + content[match.end():]
-    return new_content
-
-
 def fix_file(md_path):
     """处理单个 Markdown 文件"""
     md_dir = os.path.dirname(os.path.abspath(md_path))
 
     with open(md_path, 'r', encoding='utf-8') as f:
         content = f.read()
-
-    # 添加 typora-root-url
-    content = add_typora_root_url(content)
 
     changes = 0
     copies = 0
@@ -71,18 +50,21 @@ def fix_file(md_path):
         desc = match.group(1)
         raw_path = match.group(2)
 
-        # 已经是正确格式 /assets/xxx.png，跳过
+        # 已经是 <img> 标签格式，跳过
         if raw_path.startswith('/assets/'):
             return match.group(0)
 
-        # 跳过 Liquid 标签（兼容旧格式，替换为新格式）
+        # 已经是 <img src="/assets/...">，跳过
+        if '<img' in match.group(0) and '/assets/' in match.group(0):
+            return match.group(0)
+
+        # 处理 Liquid 标签，提取文件名
         if '{{' in raw_path:
-            # 从 Liquid 标签中提取文件名
-            m = re.search(r'/assets/([^"}]+)', raw_path)
+            m = re.search(r'/assets/([^"}\s]+)', raw_path)
             if m:
                 fname = m.group(1)
                 changes += 1
-                return f'![{desc}](/assets/{fname})'
+                return f'<img src="/assets/{fname}" alt="{desc}">'
             return match.group(0)
 
         # 提取文件名
@@ -117,7 +99,7 @@ def fix_file(md_path):
                 return match.group(0)
 
         changes += 1
-        return f'![{desc}](/assets/{fname})'
+        return f'<img src="/assets/{fname}" alt="{desc}">'
 
     new_content = IMG_PATTERN.sub(replacer, content)
 

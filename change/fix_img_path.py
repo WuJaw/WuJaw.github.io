@@ -14,7 +14,7 @@ import shutil
 import sys
 import glob
 
-BLOG_ROOT = os.path.dirname(os.path.abspath(__file__))
+BLOG_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS_DIR = os.path.join(BLOG_ROOT, 'assets')
 IMG_PATTERN = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
 IMG_EXTS = ('png', 'jpg', 'jpeg', 'gif', 'svg', 'webp')

@@ -12,7 +12,7 @@ import re
 import sys
 import glob
 
-BLOG_ROOT = os.path.dirname(os.path.abspath(__file__))
+BLOG_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 匹配 <img src="/assets/xxx.png" alt="xxx">
 IMG_TAG_PATTERN = re.compile(r'<img\s+src="(/assets/[^"]+)"\s+alt="([^"]*)"\s*>')

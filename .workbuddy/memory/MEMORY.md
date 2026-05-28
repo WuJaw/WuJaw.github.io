@@ -30,3 +30,7 @@ WuJaw.github.io/
 ## 搜索功能
 
 首页顶部有纯前端搜索框，输入文字实时过滤文章标题和分类名，空分类卡片自动隐藏。
+
+## 图片方案
+
+Typora 写文章用 `![x](../assets/x.png)`，push 前用 `change/fix_img_path.py` 转为 `<img src="/assets/x.png">`，继续编辑用 `change/fix_img_reverse.py` 转回。图片统一放 `assets/` 目录。配套 `change/typora.bat` 和 `change/web.bat` 双击运行。

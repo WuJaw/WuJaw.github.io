@@ -2,7 +2,7 @@
 layout: post
 title: "Jekyll 博客图片路径配置：Typora 与网页双兼容方案"
 date: 2026-05-28
-category: 博客
+category: 博客搭建
 ---
 
 Typora 写 Markdown、Jekyll 生成网页，两者的图片路径解析机制不同，导致一个路径格式无法同时满足两端预览。记录下最终方案和配套脚本。

@@ -530,6 +530,7 @@
 </head>
 <body>
 
+{% unless page.url == "/" or page.url == "/index.html" %}
 <nav class="site-nav" aria-label="站点目录">
   <div class="toc-title">目录</div>
   <ul class="toc-list">
@@ -545,6 +546,7 @@
     <li class="toc-home"><a href="{{ site.baseurl }}/">← 回到首页</a></li>
   </ul>
 </nav>
+{% endunless %}
 
 {{ content }}
 

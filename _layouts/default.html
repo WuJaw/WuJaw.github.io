@@ -372,6 +372,80 @@
     color: var(--ink);
   }
 
+  /* ========== 文章大纲 TOC ========== */
+  .toc-panel {
+    position: fixed;
+    top: 60px;
+    /* 定位到正文右侧 20px 处 */
+    left: calc(50% + 380px);
+    width: 200px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    /* 细滚动条 */
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+
+  .toc-panel::-webkit-scrollbar { width: 3px; }
+  .toc-panel::-webkit-scrollbar-track { background: transparent; }
+  .toc-panel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+  .toc-title {
+    font-size: var(--fs-meta);
+    font-weight: 700;
+    color: var(--quiet);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-list li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-list a {
+    display: block;
+    padding: 3px 0 3px 0;
+    color: var(--quiet);
+    text-decoration: none;
+    transition: color 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toc-list a:hover {
+    color: var(--ink);
+  }
+
+  /* h3 缩进 */
+  .toc-list .toc-h3 > a {
+    padding-left: 12px;
+    font-size: var(--fs-meta);
+  }
+
+  /* 当前激活项 */
+  .toc-list a.active {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* 只在足够宽的屏幕上显示 TOC（正文 720px + 两侧各需 ~220px） */
+  @media (max-width: 1160px) {
+    .toc-panel { display: none; }
+  }
+
   /* ========== 响应式 ========== */
   @media (max-width: 600px) {
     body {

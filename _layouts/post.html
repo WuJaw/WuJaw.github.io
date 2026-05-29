@@ -9,3 +9,67 @@ layout: default
 <div class="post-content">
   {{ content }}
 </div>
+
+<!-- 右侧大纲 TOC -->
+<nav class="toc-panel" id="toc-panel" aria-label="文章大纲"></nav>
+
+<script>
+(function () {
+  var panel = document.getElementById('toc-panel');
+  var content = document.querySelector('.post-content');
+  if (!panel || !content) return;
+
+  // 收集 h2 / h3
+  var headings = Array.from(content.querySelectorAll('h2, h3'));
+  if (headings.length < 2) { panel.style.display = 'none'; return; }
+
+  // 给每个标题加 id（如果没有的话）
+  headings.forEach(function (h, i) {
+    if (!h.id) {
+      h.id = 'heading-' + i;
+    }
+  });
+
+  // 构建 TOC HTML
+  var html = '<div class="toc-title">目录</div><ul class="toc-list">';
+  headings.forEach(function (h) {
+    var cls = h.tagName === 'H3' ? ' class="toc-h3"' : '';
+    // 取文字，去掉可能的行内 HTML 标签
+    var text = h.textContent.trim();
+    html += '<li' + cls + '><a href="#' + h.id + '">' + text + '</a></li>';
+  });
+  html += '</ul>';
+  panel.innerHTML = html;
+
+  // 高亮当前章节
+  var links = Array.from(panel.querySelectorAll('a'));
+
+  function onScroll() {
+    var scrollY = window.scrollY || window.pageYOffset;
+    var active = null;
+    for (var i = headings.length - 1; i >= 0; i--) {
+      if (headings[i].getBoundingClientRect().top + scrollY - 80 <= scrollY) {
+        active = i;
+        break;
+      }
+    }
+    links.forEach(function (a, i) {
+      a.classList.toggle('active', i === active);
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // 平滑跳转
+  links.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = document.getElementById(a.getAttribute('href').slice(1));
+      if (target) {
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+      }
+    });
+  });
+})();
+</script>

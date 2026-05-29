@@ -267,6 +267,47 @@
     line-height: 1.6;
   }
 
+  /* 代码块 — 复制按钮容器 */
+  .post-content .highlight,
+  .post-content pre:not(.highlight) {
+    position: relative;
+  }
+
+  /* ========== 代码块复制按钮 ========== */
+  .copy-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-family: inherit;
+    line-height: 1.6;
+    color: var(--quiet);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+    z-index: 1;
+  }
+
+  .highlight:hover .copy-btn,
+  pre:hover .copy-btn,
+  .copy-btn:focus {
+    opacity: 1;
+  }
+
+  .copy-btn:hover {
+    color: var(--ink);
+    border-color: var(--quiet);
+  }
+
+  .copy-btn.copied {
+    color: #718c00;
+    border-color: #718c00;
+  }
+
   /* ========== Rouge 语法高亮 ========== */
   .highlight .c   { color: #8e908c; font-style: italic; } /* 注释 */
   .highlight .cm  { color: #8e908c; font-style: italic; }

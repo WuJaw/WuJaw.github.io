@@ -57,7 +57,7 @@
     color: var(--body);
     font-size: var(--fs-body);
     line-height: 1.75;
-    max-width: 900px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 60px 20px 40px;
   }
@@ -413,25 +413,36 @@
     color: var(--ink);
   }
 
-  /* ========== 文章大纲 TOC ========== */
-  .toc-panel {
+  /* ========== 侧边面板公共 ========== */
+  .toc-panel,
+  .site-nav {
     position: fixed;
     top: 60px;
-    /* 定位到正文左侧 20px 处 */
-    right: calc(50% + 470px);
     width: 200px;
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     font-size: var(--fs-small);
     line-height: 1.6;
-    /* 细滚动条 */
     scrollbar-width: thin;
     scrollbar-color: var(--line) transparent;
   }
 
-  .toc-panel::-webkit-scrollbar { width: 3px; }
-  .toc-panel::-webkit-scrollbar-track { background: transparent; }
-  .toc-panel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+  .toc-panel::-webkit-scrollbar,
+  .site-nav::-webkit-scrollbar { width: 3px; }
+  .toc-panel::-webkit-scrollbar-track,
+  .site-nav::-webkit-scrollbar-track { background: transparent; }
+  .toc-panel::-webkit-scrollbar-thumb,
+  .site-nav::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+  /* 左侧：文章内大纲 */
+  .toc-panel {
+    right: calc(50% + 380px);
+  }
+
+  /* 右侧：站点目录 */
+  .site-nav {
+    left: calc(50% + 380px);
+  }
 
   .toc-title {
     font-size: var(--fs-meta);
@@ -470,10 +481,27 @@
     color: var(--ink);
   }
 
-  /* h3 缩进 */
+  /* 站点目录 — h2 分类 */
+  .site-nav .toc-h2 > a {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    padding-top: 10px;
+  }
+
+  /* 站点目录/文章大纲 — h3 缩进 */
   .toc-list .toc-h3 > a {
     padding-left: 12px;
     font-size: var(--fs-meta);
+  }
+
+  /* 站点目录 — 回到首页 */
+  .site-nav .toc-home > a {
+    color: var(--quiet);
+    font-size: var(--fs-meta);
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
   }
 
   /* 当前激活项 */
@@ -482,9 +510,10 @@
     font-weight: 600;
   }
 
-  /* 只在足够宽的屏幕上显示 TOC（正文 720px + 两侧各需 ~220px） */
-  @media (max-width: 1340px) {
-    .toc-panel { display: none; }
+  /* 窄屏隐藏（正文 720px + 两侧各需 ~220px） */
+  @media (max-width: 1160px) {
+    .toc-panel,
+    .site-nav { display: none; }
   }
 
   /* ========== 响应式 ========== */
@@ -500,6 +529,22 @@
 </style>
 </head>
 <body>
+
+<nav class="site-nav" aria-label="站点目录">
+  <div class="toc-title">目录</div>
+  <ul class="toc-list">
+    {% assign sorted_cats = site.categories | sort %}
+    {% for category in sorted_cats %}
+      {% assign cat_name = category[0] %}
+      {% assign cat_posts = category[1] | sort: "date" | reverse %}
+    <li class="toc-h2"><a href="javascript:void(0)">{{ cat_name }}</a></li>
+      {% for post in cat_posts %}
+    <li class="toc-h3"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
+      {% endfor %}
+    {% endfor %}
+    <li class="toc-home"><a href="{{ site.baseurl }}/">← 回到首页</a></li>
+  </ul>
+</nav>
 
 {{ content }}
 

@@ -1,0 +1,116 @@
+---
+layout: post
+title: "Jekyll 博客添加纯前端搜索：实时过滤文章标题与分类"
+date: 2026-05-29
+category: 博客搭建
+---
+
+首页顶部加一个搜索框，输入文字实时过滤文章标题和分类名，空分类卡片自动隐藏。不依赖任何第三方搜索库，纯前端 JS 实现。
+
+---
+
+## 效果
+
+| 功能 | 说明 |
+|---|---|
+| 实时过滤 | `input` 事件触发，键入即搜 |
+| 匹配范围 | 文章标题 + 分类名称 |
+| 空分类隐藏 | 某分类下所有文章都被过滤掉时，整张卡片消失 |
+| 支持中文 | `indexOf` 直接匹配，无需分词 |
+| 零依赖 | 纯 HTML + CSS + JS |
+
+---
+
+## 实现
+
+全部代码在 `index.html` 里，分为 HTML、CSS、JS 三部分。
+
+### HTML：搜索框 + 数据属性
+
+首页结构是分类卡片视角，用 Jekyll 的 Liquid 循环生成：
+
+```html
+<input type="text" class="search-input" id="search" placeholder="搜索文章..." autofocus>
+
+{% raw %}
+<div class="category-index">
+  {% for category in sorted_cats %}
+  <div class="cat-card" data-category="{{ cat_name | escape }}">
+    <div class="cat-card-header">...</div>
+    <ul class="cat-articles">
+      {% for post in cat_posts %}
+      <li data-title="{{ post.title | escape }}"
+          data-category="{{ cat_name | escape }}">
+        <a href="{{ post.url }}">{{ post.title }}</a>
+        <span>{{ post.date | date: "%Y-%m-%d" }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+{% endraw %}
+```
+
+关键设计：给每个 `<li>` 和 `<div class="cat-card">` 挂 `data-*` 属性，搜索时直接读 DOM 属性，不走 Ajax。
+
+### CSS：隐藏规则
+
+```css
+.cat-card.hidden,
+.cat-articles li.hidden {
+  display: none;
+}
+```
+
+两张 `.hidden` 规则：文章被隐藏，卡片里没可见项时也隐藏整张卡片。
+
+### JS：核心逻辑
+
+```javascript
+(function() {
+  var input = document.getElementById('search');
+  var cards = document.querySelectorAll('.cat-card');
+  var items = document.querySelectorAll('.cat-articles li');
+
+  function filter() {
+    var q = input.value.trim().toLowerCase();
+
+    // 第一步：过滤单篇文章
+    items.forEach(function(item) {
+      var title = (item.getAttribute('data-title') || '').toLowerCase();
+      var cat   = (item.getAttribute('data-category') || '').toLowerCase();
+      if (!q || title.indexOf(q) >= 0 || cat.indexOf(q) >= 0) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+
+    // 第二步：隐藏空分类卡片
+    cards.forEach(function(card) {
+      var visible = card.querySelectorAll('.cat-articles li:not(.hidden)');
+      if (visible.length === 0) {
+        card.classList.add('hidden');
+      } else {
+        card.classList.remove('hidden');
+      }
+    });
+  }
+
+  input.addEventListener('input', filter);
+})();
+```
+
+**两步走**：
+
+1. 遍历所有 `<li>`，标题或分类名包含关键字就显示，否则隐藏
+2. 遍历所有卡片，如果卡片内没有可见文章，整张卡片也隐藏
+
+`indexOf` 比正则简单得多，中文匹配也没问题——因为你搜的是标题里的完整词语，不是分词。
+
+---
+
+## 为什么不用搜索库
+
+Algolia、Lunr 这类搜索库需要做分词索引，对中文天然不友好（Lunr 默认没有中文分词器，Algolia 要额外配）。这个博客文章数不多（十几篇），直接用字符串 `indexOf` 匹配标题和分类完全够用，而且零构建、零配置。

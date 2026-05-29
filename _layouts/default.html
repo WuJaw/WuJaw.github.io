@@ -19,16 +19,16 @@
     --code-bg:  #f4f4f5;
 
     /* 字体层级 — 参照 lsy22 */
-    --fs-micro:   0.625rem;   /* 10px */
-    --fs-caption: 0.6875rem;  /* 11px */
-    --fs-meta:    0.75rem;    /* 12px */
-    --fs-small:   0.8125rem;  /* 13px */
-    --fs-ui:      0.875rem;   /* 14px */
-    --fs-body:    0.9375rem;  /* 15px */
-    --fs-h3:      1.0625rem;  /* 17px */
-    --fs-h2:      1.25rem;    /* 20px */
-    --fs-h1:      1.5rem;     /* 24px */
-    --fs-title:   2rem;       /* 32px */
+    --fs-micro:   0.6875rem;  /* 11px */
+    --fs-caption: 0.75rem;    /* 12px */
+    --fs-meta:    0.8125rem;  /* 13px */
+    --fs-small:   0.875rem;   /* 14px */
+    --fs-ui:      0.9375rem;  /* 15px */
+    --fs-body:    1rem;       /* 16px */
+    --fs-h3:      1.125rem;   /* 18px */
+    --fs-h2:      1.3125rem;  /* 21px */
+    --fs-h1:      1.5625rem;  /* 25px */
+    --fs-title:   2.125rem;   /* 34px */
 
     /* 间距 */
     --space-xs:  4px;
@@ -57,7 +57,7 @@
     color: var(--body);
     font-size: var(--fs-body);
     line-height: 1.75;
-    max-width: 720px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 60px 20px 40px;
   }
@@ -436,12 +436,12 @@
 
   /* 左侧：站点目录 */
   .site-nav {
-    right: calc(50% + 380px);
+    right: calc(50% + 420px);
   }
 
   /* 右侧：文章内大纲 */
   .toc-panel {
-    left: calc(50% + 380px);
+    left: calc(50% + 420px);
   }
 
   .toc-title {
@@ -511,7 +511,7 @@
   }
 
   /* 窄屏隐藏（正文 720px + 两侧各需 ~220px） */
-  @media (max-width: 1160px) {
+  @media (max-width: 1240px) {
     .toc-panel,
     .site-nav { display: none; }
   }

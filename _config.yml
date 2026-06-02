@@ -12,6 +12,17 @@ kramdown:
 # 文章 URL 格式：/posts/文章标题/
 permalink: /posts/:title/
 
+# 功能开关 — 设为 false 即隐藏对应模块
+features:
+  search:        true   # 首页搜索框
+  site_nav:      true   # 左侧站点目录（分类+文章列表）
+  toc:           true   # 右侧文章大纲（TOC）
+  copy_button:   true   # 代码块复制按钮
+
+# 隐藏分类 — 列在此处的分类不会出现在首页和左侧目录中
+hidden_categories:
+  - 博客搭建
+
 # 排除不需要编译的文件
 exclude:
   - README.md

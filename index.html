@@ -2,14 +2,17 @@
 layout: default
 title: 文章
 ---
+{% if site.features.search %}
 <div class="search-box">
   <input type="text" class="search-input" id="search" placeholder="搜索文章..." autofocus>
 </div>
+{% endif %}
 
 <div class="category-index">
   {% assign sorted_cats = site.categories | sort %}
   {% for category in sorted_cats %}
     {% assign cat_name = category[0] %}
+    {% unless site.hidden_categories contains cat_name %}
     {% assign cat_posts = category[1] | sort: "date" | reverse %}
   <div class="cat-card" data-category="{{ cat_name | escape }}">
     <div class="cat-card-header">
@@ -25,6 +28,7 @@ title: 文章
       {% endfor %}
     </ul>
   </div>
+    {% endunless %}
   {% endfor %}
 </div>
 

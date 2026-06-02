@@ -530,6 +530,7 @@
 </head>
 <body>
 
+{% if site.features.site_nav %}
 {% unless page.url == "/" or page.url == "/index.html" %}
 <nav class="site-nav" aria-label="站点目录">
   <div class="toc-title">目录</div>
@@ -537,16 +538,19 @@
     {% assign sorted_cats = site.categories | sort %}
     {% for category in sorted_cats %}
       {% assign cat_name = category[0] %}
+      {% unless site.hidden_categories contains cat_name %}
       {% assign cat_posts = category[1] | sort: "date" | reverse %}
     <li class="toc-h2"><a href="javascript:void(0)">{{ cat_name }}</a></li>
       {% for post in cat_posts %}
     <li class="toc-h3"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
       {% endfor %}
+      {% endunless %}
     {% endfor %}
     <li class="toc-home"><a href="{{ site.baseurl }}/">← 回到首页</a></li>
   </ul>
 </nav>
 {% endunless %}
+{% endif %}
 
 {{ content }}
 

@@ -10,8 +10,10 @@ layout: default
   {{ content }}
 </div>
 
+{% if site.features.toc %}
 <!-- 右侧大纲 TOC -->
 <nav class="toc-panel" id="toc-panel" aria-label="文章大纲"></nav>
+{% endif %}
 
 <script>
 (function () {
@@ -74,6 +76,7 @@ layout: default
 })();
 </script>
 
+{% if site.features.copy_button %}
 <script>
 /* ========== 代码块复制按钮 ========== */
 (function () {
@@ -100,3 +103,4 @@ layout: default
   });
 })();
 </script>
+{% endif %}

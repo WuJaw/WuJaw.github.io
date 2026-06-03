@@ -1,6 +1,8 @@
 @echo off
+setlocal enabledelayedexpansion
 cd /d "%~dp0"
 git add .
+set "files="
 for /f "delims=" %%a in ('git status --porcelain 2^>nul') do (
   set "files=!files! [%%a]"
 )

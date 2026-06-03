@@ -1,0 +1,189 @@
+---
+layout: post
+title: "jekyll-syntax-highlight"
+date: 2026-05-29
+category: 博客
+---
+
+Jekyll 默认用 Rouge 做代码语法高亮，但默认渲染只有骨架 class 没有颜色。记录下从主题选型到自定义 CSS 的完整配置过程。
+
+---
+
+## 原理
+
+Jekyll 编译 Markdown 时，kramdown 把围栏代码块 `` ``` `` 交给 Rouge 解析。Rouge 输出带 class 的 `<span>`：
+
+```html
+<span class="k">int</span> <span class="n">main</span><span class="p">()</span>
+```
+
+每种 token 对应一个 class（`k` = keyword、`n` = name、`p` = punctuation），你只需要为这些 class 写 CSS 颜色即可。
+
+---
+
+## _config.yml 配置
+
+```yaml
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge   # 默认就是 rouge，可省略
+```
+
+`input: GFM` 让 kramdown 支持 `` ```language `` 的 GitHub 风格围栏语法，不必用 Liquid 的 `{% raw %}{% highlight %}{% endraw %}` 标签。
+
+---
+
+## 获取 Rouge CSS 主题
+
+Rouge 内置了大量主题，一行命令导出：
+
+```bash
+# 查看可用主题
+rougify help style
+
+# 导出指定主题的 CSS
+rougify style thankful_eyes > rouge.css
+```
+
+常见主题预览：
+
+| 主题 | 风格 | 背景色 |
+|---|---|---|
+| `github` | GitHub 风格 | 白色 |
+| `monokai` | Sublime Text 经典 | 深色 |
+| `monokai.sublime` | Monokai 变体 | 深色 |
+| `thankful_eyes` | 暖色调 | 深色 |
+| `colorful` | 高对比度 | 白色 |
+| `tulip` | 柔和 | 白色 |
+| `base16.dark` | Base16 暗色 | 深色 |
+| `igorpro` | 仿 Igor Pro | 白色 |
+
+---
+
+## 本博客选择的主题
+
+选用 **Tomorrow Night Eighties**，手动写了完整 CSS（不依赖外部文件）：
+
+```css
+/* ========== Rouge 语法高亮 ========== */
+.highlight .c   { color: #8e908c; font-style: italic; } /* 注释 */
+.highlight .cm  { color: #8e908c; font-style: italic; }
+.highlight .cp  { color: #8e908c; font-style: italic; }
+.highlight .c1  { color: #8e908c; font-style: italic; }
+.highlight .cs  { color: #8e908c; font-style: italic; }
+.highlight .err { color: #c82829; }                       /* 错误 */
+.highlight .k   { color: #8959a8; font-weight: 600; }     /* 关键字 */
+.highlight .kd  { color: #8959a8; font-weight: 600; }
+.highlight .kn  { color: #8959a8; font-weight: 600; }
+.highlight .kp  { color: #8959a8; }
+.highlight .kr  { color: #8959a8; font-weight: 600; }
+.highlight .kt  { color: #8959a8; }
+.highlight .kc  { color: #c82829; }                       /* 常量 */
+.highlight .o   { color: #3e999f; }                       /* 操作符 */
+.highlight .ow  { color: #3e999f; }
+.highlight .s   { color: #718c00; }                       /* 字符串 */
+.highlight .sb  { color: #718c00; }
+.highlight .sc  { color: #718c00; }
+.highlight .sd  { color: #718c00; }
+.highlight .s2  { color: #718c00; }
+.highlight .se  { color: #718c00; }
+.highlight .sh  { color: #718c00; }
+.highlight .si  { color: #718c00; }
+.highlight .sx  { color: #718c00; }
+.highlight .sr  { color: #718c00; }
+.highlight .s1  { color: #718c00; }
+.highlight .ss  { color: #718c00; }
+.highlight .m   { color: #f5871f; }                       /* 数字 */
+.highlight .mf  { color: #f5871f; }
+.highlight .mh  { color: #f5871f; }
+.highlight .mi  { color: #f5871f; }
+.highlight .mo  { color: #f5871f; }
+.highlight .il  { color: #f5871f; }
+.highlight .n   { color: #4d4d4c; }                       /* 名称 */
+.highlight .na  { color: #4d4d4c; }
+.highlight .nb  { color: #4d4d4c; }
+.highlight .nc  { color: #c82829; font-weight: 600; }     /* 类名 */
+.highlight .no  { color: #c82829; }
+.highlight .nd  { color: #3e999f; }
+.highlight .ne  { color: #c82829; }
+.highlight .nf  { color: #4271ae; }                       /* 函数名 */
+.highlight .nx  { color: #4d4d4c; }
+.highlight .nt  { color: #8959a8; }                       /* 标签 */
+.highlight .nv  { color: #c82829; }                       /* 变量 */
+.highlight .vc  { color: #c82829; }
+.highlight .vg  { color: #c82829; }
+.highlight .vi  { color: #c82829; }
+.highlight .gh  { color: #4d4d4c; font-weight: 600; }     /* 标题 */
+.highlight .gu  { color: #8e908c; }
+.highlight .gd  { color: #c82829; }                       /* diff */
+.highlight .gi  { color: #718c00; }
+.highlight .gr  { color: #c82829; }
+.highlight .gs  { font-weight: 600; }
+```
+
+CSS 全部写在 `_layouts/default.html` 的 `<style>` 块里，零外部请求。
+
+---
+
+## Rouge 常用 token class 速查
+
+| Class | 含义 | 典型内容 |
+|---|---|---|
+| `.c` | Comment | `// 注释` |
+| `.k` | Keyword | `int` `return` `if` `while` `for` |
+| `.kd` | Keyword Declaration | `typedef` `struct` `enum` |
+| `.kc` | Keyword Constant | `NULL` `true` `false` |
+| `.s` | String | `"hello"` |
+| `.m` | Number | `42` `0xFF` `3.14` |
+| `.n` | Name (普通标识符) | 变量名、函数名 |
+| `.nf` | Name Function | 函数定义时的名字 |
+| `.nc` | Name Class | `UART_HandleTypeDef` |
+| `.nv` | Name Variable | `#define` 常量 |
+| `.o` | Operator | `+` `=` `*` |
+| `.p` | Punctuation | `(` `)` `{` `}` `;` |
+| `.err` | Error | 解析失败的 token |
+
+不需要给每个 class 都写规则，只写你要区分颜色的即可。比如 `.p` 不写就继承正文颜色。
+
+---
+
+## 代码块容器样式
+
+除了 token 上色，代码块的容器也需要一点样式：
+
+```css
+.post-content div.highlighter-rouge {
+  margin: 1rem 0;
+}
+
+.post-content div.highlight {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.post-content pre.highlight {
+  background: transparent;
+  padding: var(--space-md);
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+```
+
+注意 `div.highlight` 和 `pre.highlight` 是两个嵌套元素——外层 div 负责背景和边框，内层 pre 负责内边距和字号。
+
+---
+
+## 总结
+
+配置代码高亮只需要三步：
+
+1. `_config.yml` 启用 kramdown + Rouge（默认就有）
+2. 选一个主题或用 `rougify style` 导出 CSS
+3. 把 CSS 放到布局文件里
+
+不需要任何插件、不需要构建工具，Jekyll 编译时自动完成。唯一要注意的是 GitHub Pages 的 Rouge 版本可能比本地旧，部分 token class 有差异，线上测试为准。

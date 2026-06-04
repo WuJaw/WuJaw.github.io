@@ -58,6 +58,7 @@ plugins:
 
 **`_layouts/post.html`** 是文章专用布局，在 default 的基础上加了标题区和日期展示：
 
+{% raw %}
 ```html
 ---
 layout: default
@@ -70,6 +71,7 @@ layout: default
   {{ content }}
 </div>
 ```
+{% endraw %}
 
 ### 3. 首页改造
 

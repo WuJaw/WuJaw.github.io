@@ -18,7 +18,7 @@ Jekyll 构建时，文章页面生成在 `/posts/文章标题/index.html`，而 
 | `![x](/assets/x.png)` | 不显示（找不到绝对路径） | 正常 |
 | `![x](../assets/x.png)` | 正常 | 不显示（解析为 `/posts/assets/x.png`） |
 | `<img src="/assets/x.png">` | 不显示 | 正常 |
-| `{{ "/assets/x.png" \| relative_url }}` | 不解析 Liquid 标签 | 正常 |
+| {% raw %}`{{ "/assets/x.png" \| relative_url }}`{% endraw %} | 不解析 Liquid 标签 | 正常 |
 
 另外，Jekyll 以下划线 `_` 开头的目录（如 `_posts/assets/`）中的文件不会被打包到 `_site`，图片放进去线上也找不到。
 
@@ -116,6 +116,6 @@ python fix_img_reverse.py
 ## 踩坑记录
 
 - `_posts/assets/` 里的图片不会被 Jekyll 发布，必须放根目录的 `assets/`
-- `{{ relative_url }}` Liquid 标签 Typora 完全无法识别，没有配置能解决
+- {% raw %}`{{ relative_url }}`{% endraw %} Liquid 标签 Typora 完全无法识别，没有配置能解决
 - Typora 不支持 `typora-root-url` 设置 Image Root Folder（部分旧版没有这个选项）
 - `baseurl` 为空时 `/assets/xxx.png` 在网页端直接可用，无需 `relative_url` filter

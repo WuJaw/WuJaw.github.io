@@ -30,7 +30,7 @@ Rendering Markup:
 
 **Jekyll 的处理顺序是：Liquid 模板引擎 → kramdown Markdown 渲染。**
 
-代码块里的 `{%` `%}` 和 `{{` `}}` 会被 Liquid 先抓走执行，kramdown 收到的已经是执行后的结果，根本不是"代码示例"了。
+代码块里的 {% raw %}`{%` `%}` 和 `{{` `}}`{% endraw %} 会被 Liquid 先抓走执行，kramdown 收到的已经是执行后的结果，根本不是"代码示例"了。
 
 ---
 

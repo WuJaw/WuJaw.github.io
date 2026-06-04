@@ -2,7 +2,7 @@
 layout: post
 title: "jekyll-add-front-matter"
 date: 2026-06-04
-category: 博客
+category: python
 ---
 
 Jekyll 文章的 front matter 和文件名里的日期 / 分类 / 标题其实是一一对应的，但手写 front matter 很容易和文件名脱节——改完文件名忘了改里面的 `title:`，或者 `date:` 和文件名对不上，构建不会报错但页面显示就乱了。

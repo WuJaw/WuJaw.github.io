@@ -23,7 +23,7 @@ features:
 
 # 隐藏分类 — 列在此处的分类不会出现在首页和左侧目录中
 hidden_categories:
-  - 博客搭建
+  - 博客
 
 # 排除不需要编译的文件
 exclude:

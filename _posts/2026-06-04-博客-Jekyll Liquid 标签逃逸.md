@@ -9,7 +9,7 @@ category: 博客
 
 ---
 
-## 现象
+## 1. 现象
 
 `git push` 后 GitHub Actions 构建失败，日志长这样：
 
@@ -26,7 +26,7 @@ Rendering Markup:
 
 ---
 
-## 根因
+## 2. 根因
 
 **Jekyll 的处理顺序是：Liquid 模板引擎 → kramdown Markdown 渲染。**
 
@@ -34,9 +34,9 @@ Rendering Markup:
 
 ---
 
-## 具体逃逸：两处
+## 3. 具体逃逸：两处
 
-### 第一处：`jekyll-build` 文章
+### 3.1. 第一处：`jekyll-build` 文章
 
 文章的代码块里写了首页模板的 Liquid 循环：
 
@@ -53,7 +53,7 @@ Rendering Markup:
 
 `{% raw %}`{% for post in site.posts %}`{% endraw %}` 被 Jekyll 真的执行，渲染时遍历了所有文章的元数据，往页面注入了一大堆 HTML 链接。
 
-### 第二处：`jekyll-toc-sidebar` 文章
+### 3.2. 第二处：`jekyll-toc-sidebar` 文章
 
 展示 `post.html` 布局代码的代码块里有：
 
@@ -69,7 +69,7 @@ Rendering Markup:
 
 ---
 
-## 正确写法
+## 4. 正确写法
 
 在代码块的外层用 raw 标签包裹。以 jekyll-build 中的循环为例：
 
@@ -96,7 +96,7 @@ Jekyll 处理时：最外层的 raw 让中间所有 Liquid 标签全部原样输
 
 ---
 
-## 避坑：raw 不能嵌套
+## 5. 避坑：raw 不能嵌套
 
 Liquid 的 raw 模式不支持嵌套——第一个 raw 闭合标签就会结束全部 raw 层，没有"层数"的概念。
 
@@ -108,7 +108,7 @@ Liquid 的 raw 模式不支持嵌套——第一个 raw 闭合标签就会结束
 
 ---
 
-## 总结
+## 6. 总结
 
 | 问题 | 原因 | 修复 |
 |---|---|---|

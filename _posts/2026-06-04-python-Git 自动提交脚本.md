@@ -11,7 +11,7 @@ category: python
 
 ---
 
-## 效果
+## 1. 效果
 
 双击 bat 后终端输出：
 
@@ -40,7 +40,7 @@ Auto-commit:
 
 ---
 
-## 目录结构
+## 2. 目录结构
 
 在工程根目录放两个文件：
 
@@ -53,7 +53,7 @@ Auto-commit:
 
 ---
 
-## autocommit.bat
+## 3. autocommit.bat
 
 ```batch
 @echo off
@@ -67,7 +67,7 @@ pause
 
 ---
 
-## autocommit.py
+## 4. autocommit.py
 
 ```python
 #!/usr/bin/env python3
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
 ---
 
-## 复制到其他工程
+## 5. 复制到其他工程
 
 只需要三步：
 
@@ -201,7 +201,7 @@ python --version
 
 ---
 
-## 几点说明
+## 6. 几点说明
 
 **为什么用临时文件写 commit message？**
 

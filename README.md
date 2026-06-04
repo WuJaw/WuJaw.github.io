@@ -37,11 +37,13 @@ WuJaw.github.io/
 ├── python/                  # 自动化脚本（Python 标准库，零依赖）
 │   ├── add_front_matter.py   #   根据文件名补齐 Jekyll Front Matter
 │   ├── fix_img_path.py       #   图片路径转 Web 格式 + 全盘搜索
+│   ├── auto_number_headings.py # 标题自动编号（h2 → 1. / h3 → 1.1）
 │   ├── fix_img_reverse.py    #   Web 路径转 Typora 格式
 │   └── autocommit.py         #   Git add + commit + push
 │
-├── deploy.bat               # 一键部署（add_fm → web → autocommit）
+├── deploy.bat               # 一键部署（自动编号 → add_fm → web → autocommit）
 ├── add_fm.bat               # 单独执行：补齐 Front Matter
+├── auto_number.bat          # 单独执行：标题自动编号
 ├── web.bat                  # 单独执行：图片转 Web 路径
 ├── typora.bat               # 单独执行：图片转 Typora 路径
 ├── autocommit.bat           # 单独执行：Git 提交推送
@@ -150,6 +152,7 @@ Jekyll 构建后可直接通过 URL 访问的独立工具页：
 | 脚本 | 功能 |
 |------|------|
 | `add_front_matter.py` | 扫描 `_posts/`，根据文件名自动写入 `layout`、`title`、`date`、`category` |
+| `auto_number_headings.py` | 自动给 h2+ 标题编号：h2 → 1. / h3 → 1.1 / h4 → 1.1.1，自动去除已有编号 |
 | `fix_img_path.py` | Typora 相对路径 → Web 绝对路径；含五层全盘图片搜索（支持 Everything 秒搜） |
 | `fix_img_reverse.py` | Web 路径 → Typora 相对路径（push 后继续本地编辑用） |
 | `autocommit.py` | `git add .` → `git commit`（带变更明细） → `git push` |
@@ -176,8 +179,9 @@ Jekyll 构建后可直接通过 URL 访问的独立工具页：
 
 | 文件 | 功能 |
 |------|------|
-| **`deploy.bat`** | **一键部署**：① 补齐 Front Matter → ② 图片转 Web 路径 → ③ Git 提交推送 |
+| **`deploy.bat`** | **一键部署**：① 标题自动编号 → ② 补齐 Front Matter → ③ 图片转 Web 路径 → ④ Git 提交推送 |
 | `add_fm.bat` | 单独补齐 Front Matter |
+| `auto_number.bat` | 单独执行标题自动编号（h2 → 1. / h3 → 1.1） |
 | `web.bat` | 单独执行图片路径转换 |
 | `typora.bat` | 单独执行图片路径还原 |
 | `autocommit.bat` | 单独执行 Git 提交推送 |

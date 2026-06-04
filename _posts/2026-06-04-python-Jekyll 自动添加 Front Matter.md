@@ -11,7 +11,7 @@ Jekyll 文章的 front matter 和文件名里的日期 / 分类 / 标题其实�
 
 ---
 
-## 效果
+## 1. 效果
 
 双击 `add_fm.bat`：
 
@@ -29,7 +29,7 @@ Jekyll 文章的 front matter 和文件名里的日期 / 分类 / 标题其实�
 
 ---
 
-## 文件命名规则
+## 2. 文件命名规则
 
 脚本依赖的文件名格式：
 
@@ -55,7 +55,7 @@ YYYY-MM-DD-分类-标题.md
 
 ---
 
-## 目录结构
+## 3. 目录结构
 
 ```
 你的工程/
@@ -66,7 +66,7 @@ YYYY-MM-DD-分类-标题.md
 
 ---
 
-## add_fm.bat
+## 4. add_fm.bat
 
 ```batch
 @echo off
@@ -78,7 +78,7 @@ pause
 
 ---
 
-## add_front_matter.py
+## 5. add_front_matter.py
 
 ```python
 #!/usr/bin/env python3
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
 ---
 
-## 逻辑拆解
+## 6. 逻辑拆解
 
 1. **剥旧** — `strip_front_matter()` 找到第一个 `---` 到第二个 `---` 之间的内容，整段切掉，只留正文
 2. **解析文件名** — 正则 `(\d{4}-\d{2}-\d{2})-(.+?)-(.+)\.md$` 提取日期 / 分类 / 标题
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
 ---
 
-## 复制到其他 Jekyll 工程
+## 7. 复制到其他 Jekyll 工程
 
 三步：
 
@@ -216,7 +216,7 @@ POSTS_DIR = os.path.join(..., "你的目录名")
 
 ---
 
-## 和 autocommit 配合
+## 8. 和 autocommit 配合
 
 整套工作流是：
 

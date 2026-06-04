@@ -1,7 +1,7 @@
 @echo off
 
 :: ============================================================
-::  一键部署：添加 Front Matter → 图片转 Web 路径 → Git 提交推送
+::  一键部署：标题自动编号 → 添加 Front Matter → 图片转 Web 路径 → Git 提交推送
 :: ============================================================
 
 :: 切换到 bat 所在目录（项目根目录）
@@ -22,8 +22,20 @@ echo  Python 已找到，开始执行...
 echo ==================================================
 echo.
 
-:: --- 步骤 1：添加 Front Matter ---
-echo [1/3] 添加 Front Matter...
+:: --- 步骤 1：标题自动编号 ---
+echo [1/4] 标题自动编号...
+python python\auto_number_headings.py _posts\
+if %errorlevel% neq 0 (
+    echo.
+    echo [错误] 标题自动编号失败，已中止。
+    echo.
+    pause
+    exit /b 1
+)
+echo.
+
+:: --- 步骤 2：添加 Front Matter ---
+echo [2/4] 添加 Front Matter...
 python python\add_front_matter.py
 if %errorlevel% neq 0 (
     echo.
@@ -34,8 +46,8 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-:: --- 步骤 2：图片路径转 Web 格式 ---
-echo [2/3] 图片路径转 Web 格式...
+:: --- 步骤 3：图片路径转 Web 格式 ---
+echo [3/4] 图片路径转 Web 格式...
 python python\fix_img_path.py
 if %errorlevel% neq 0 (
     echo.
@@ -46,8 +58,8 @@ if %errorlevel% neq 0 (
 )
 echo.
 
-:: --- 步骤 3：Git 自动提交推送 ---
-echo [3/3] Git 自动提交推送...
+:: --- 步骤 4：Git 自动提交推送 ---
+echo [4/4] Git 自动提交推送...
 python python\autocommit.py
 if %errorlevel% neq 0 (
     echo.

@@ -108,6 +108,7 @@ category: 博客
 
 替换 `_layouts/post.html` 为以下内容：
 
+{% raw %}
 ```html
 ---
 layout: default
@@ -180,6 +181,7 @@ layout: default
 })();
 </script>
 ```
+{% endraw %}
 
 ---
 

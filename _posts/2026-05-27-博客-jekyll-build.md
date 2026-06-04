@@ -76,12 +76,12 @@ layout: default
 把原来手动加链接的 `<ul>` 改成 Liquid 循环：
 
 ```html
-{% for post in site.posts %}
+{% raw %}{% for post in site.posts %}
 <li class="post-item">
   <a href="{{ post.url }}">{{ post.title }}</a>
   <span>{{ post.date | date: "%Y年%-m月%-d日" }}</span>
 </li>
-{% endfor %}
+{% endfor %}{% endraw %}
 ```
 
 之后新增文章完全不用改首页，自动列出来。

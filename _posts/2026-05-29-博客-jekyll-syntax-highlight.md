@@ -31,7 +31,7 @@ kramdown:
   syntax_highlighter: rouge   # 默认就是 rouge，可省略
 ```
 
-`input: GFM` 让 kramdown 支持 `` ```language `` 的 GitHub 风格围栏语法，不必用 Liquid 的 `{% raw %}{% highlight %}{% endraw %}`{: style="color: inherit;"} 标签。
+`input: GFM` 让 kramdown 支持 `` ```language `` 的 GitHub 风格围栏语法，不必用 Liquid 标签（`highlight` 和 `endhighlight`）。
 
 ---
 

@@ -1,7 +1,8 @@
 ---
 layout: post
-title: Git 自动提交脚本：双击 push，带变更明细
+title: "git-autocommit"
 date: 2026-06-04
+category: 博客
 ---
 
 每次改完代码要 `git add` → `git commit` → `git push`，敲三句命令不可怕，可怕的是 commit message 写什么。顺手写 `update` 太敷衍，写详细又不想费脑子。

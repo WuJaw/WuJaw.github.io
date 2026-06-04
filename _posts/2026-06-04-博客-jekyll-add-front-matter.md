@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Jekyll 批量重写 Front Matter：从文件名自动生成"
+title: "jekyll-add-front-matter"
 date: 2026-06-04
 category: 博客
 ---

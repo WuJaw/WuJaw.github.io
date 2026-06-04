@@ -37,6 +37,14 @@ def main():
         print("无变更，跳过提交。")
         return
 
+    # 显示变更文件列表
+    print("=" * 50)
+    print("变更文件：")
+    for line in lines:
+        status = line[:2]  # XY status code
+        path = line[3:]    # file path
+        print(f"  {status}  {path}")
+
     # write commit message to temp file
     msg_fd, msg_path = tempfile.mkstemp(suffix=".txt", prefix="autocommit_")
     try:
@@ -49,16 +57,30 @@ def main():
         # commit
         r = git("commit", "-F", msg_path)
         if r.returncode != 0:
-            print(f"提交失败: {r.stderr.strip()}")
+            print(f"\n提交失败: {r.stderr.strip()}")
             sys.exit(1)
-        print(f"提交成功，共 {len(lines)} 个文件")
+
+        # 获取 commit hash
+        hash_r = git("rev-parse", "--short", "HEAD")
+        commit_hash = hash_r.stdout.strip()
+
+        print(f"\n提交成功 [{commit_hash}]")
+        print("-" * 50)
+        print("提交内容：")
+        # 读取 commit message 内容
+        with open(msg_path, "r", encoding="utf-8") as f:
+            commit_msg = f.read().strip()
+        print(commit_msg)
+        print("-" * 50)
+        print(f"共 {len(lines)} 个文件")
 
         # push
         r = git("push")
         if r.returncode != 0:
-            print(f"推送失败: {r.stderr.strip()}")
+            print(f"\n推送失败: {r.stderr.strip()}")
             sys.exit(1)
         print("推送成功。")
+        print("=" * 50)
     finally:
         os.unlink(msg_path)
 

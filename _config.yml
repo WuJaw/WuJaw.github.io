@@ -3,6 +3,9 @@ description: just as well
 baseurl: ""
 url: "https://wujaw.github.io"
 
+# 不使用任何 GitHub Pages 内置主题，使用本地自定义 _layouts/
+theme: null
+
 # Markdown 渲染
 markdown: kramdown
 kramdown:

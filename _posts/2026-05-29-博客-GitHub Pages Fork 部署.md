@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "github-pages-fork"
+title: "GitHub Pages Fork 部署"
 date: 2026-05-29
 category: 博客
 ---

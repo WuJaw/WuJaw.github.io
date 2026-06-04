@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "jekyll-add-front-matter"
+title: "Jekyll 自动添加 Front Matter"
 date: 2026-06-04
 category: python
 ---

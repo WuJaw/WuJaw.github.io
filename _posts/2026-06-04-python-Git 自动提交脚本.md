@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "git-autocommit"
+title: "Git 自动提交脚本"
 date: 2026-06-04
 category: python
 ---

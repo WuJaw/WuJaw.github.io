@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "jekyll-liquid-escape"
+title: "Jekyll Liquid 标签逃逸"
 date: 2026-06-04
 category: 博客
 ---

@@ -494,12 +494,12 @@
 
   /* 左侧：站点目录 */
   .site-nav {
-    right: calc(50% + 420px);
+    right: calc(50% + 490px);
   }
 
   /* 右侧：文章内大纲 */
   .toc-panel {
-    left: calc(50% + 420px);
+    left: calc(50% + 490px);
   }
 
   .toc-title {
@@ -568,8 +568,8 @@
     font-weight: 600;
   }
 
-  /* 窄屏隐藏（正文 720px + 两侧各需 ~220px） */
-  @media (max-width: 1240px) {
+  /* 窄屏隐藏（正文 900px + 两侧面板各 200px + 间距 40px*2） */
+  @media (max-width: 1380px) {
     .toc-panel,
     .site-nav { display: none; }
   }

@@ -33,7 +33,7 @@ layout: default
   });
 
   // 构建 TOC HTML
-  var html = '<div class="toc-title">目录</div><ul class="toc-list">';
+  var html = '<div class="toc-title">大纲</div><ul class="toc-list">';
   headings.forEach(function (h) {
     var cls = ' class="' + (h.tagName === 'H3' ? 'toc-h3' : 'toc-h2') + '"';
     // 取文字，去掉可能的行内 HTML 标签

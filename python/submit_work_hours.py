@@ -4,28 +4,105 @@
 Cookie存放在同目录 cookie.txt 中
 """
 
-import pandas as pd
-import requests
 import time
 import json
 import os
+import sys
+import argparse
 from datetime import datetime
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-COOKIE_FILE = os.path.join(SCRIPT_DIR, 'cookie.txt')
+# PyInstaller 打包后 __file__ 指向临时目录，cookie 会丢失
+# 需要用 exe 所在目录（或 .py 脚本所在目录）
+if getattr(sys, 'frozen', False):
+    APP_DIR = os.path.dirname(sys.executable)
+else:
+    APP_DIR = os.path.dirname(os.path.abspath(__file__))
+COOKIE_FILE = os.path.join(APP_DIR, 'cookie.txt')
 BASE_URL = "http://10.10.5.25:8004"
-USER_ID = 111
-USER_NAME = "吴潇"
 DEFAULT_PROJECT_CODE = "RD240009"
 
 WORK_STATUS = {'办公', '外勤', '出差'}
 REST_STATUS = {'法定假', '周六', '周日', '年假', '病假', '调休', '事假', '婚假', '丧假', '其他'}
 
 
+def extract_uid_from_cookie(cookie_str):
+    """从 cookie 字符串中提取 token=xxx 作为 userId"""
+    for part in cookie_str.split(';'):
+        part = part.strip()
+        if part.startswith('token='):
+            val = part[6:].strip()
+            if val.isdigit():
+                return int(val)
+    return 0
+
+
+def read_clipboard():
+    """从 Windows 剪贴板读取文本（PowerShell 方式，兼容 exe）"""
+    try:
+        import subprocess
+        result = subprocess.run(
+            ['powershell', '-NoProfile', '-Command', 'Get-Clipboard'],
+            capture_output=True, text=True, timeout=5
+        )
+        text = result.stdout.strip()
+        if text:
+            return text
+    except:
+        pass
+    # 备用：ctypes
+    try:
+        import ctypes
+        CF_UNICODETEXT = 13
+        kernel32 = ctypes.windll.kernel32
+        user32 = ctypes.windll.user32
+        if user32.OpenClipboard(0):
+            try:
+                if user32.IsClipboardFormatAvailable(CF_UNICODETEXT):
+                    handle = user32.GetClipboardData(CF_UNICODETEXT)
+                    if handle:
+                        ptr = kernel32.GlobalLock(handle)
+                        if ptr:
+                            text = ctypes.wstring_at(ptr)
+                            kernel32.GlobalUnlock(handle)
+                            return text.strip()
+            finally:
+                user32.CloseClipboard()
+    except:
+        pass
+    return ''
+
+
+def input_cookie(prompt='Cookie: '):
+    """输入Cookie，支持回车从剪贴板读取（避免控制台粘贴截断）"""
+    print('（浏览器复制Cookie后直接回车粘贴，或手动输入）')
+    raw = input(prompt).strip()
+    if raw:
+        return raw
+    # 回车 → 读剪贴板
+    clip = read_clipboard()
+    if clip:
+        # 显示首尾，让用户确认
+        if len(clip) > 80:
+            print(f'  已读取 ({len(clip)} 字符): {clip[:50]}...{clip[-20:]}')
+        else:
+            print(f'  已读取: {clip}')
+        return clip
+    print('  剪贴板为空，请先在浏览器中复制Cookie')
+    return ''
+
+
 def load_cookie():
+    """读取保存的凭据，返回 cookie 字符串或 None"""
     if os.path.exists(COOKIE_FILE):
-        with open(COOKIE_FILE, 'r') as f:
-            return f.read().strip()
+        raw = open(COOKIE_FILE, 'r').read().strip()
+        # 兼容旧 JSON 格式
+        if raw.startswith('{'):
+            try:
+                d = json.loads(raw)
+                return d.get('cookie', '')
+            except json.JSONDecodeError:
+                pass
+        return raw
     return None
 
 
@@ -35,6 +112,7 @@ def save_cookie(cookie):
 
 
 def api_post(cookie, url, payload):
+    import requests
     headers = {'Content-Type': 'application/json', 'Cookie': cookie}
     try:
         resp = requests.post(f'{BASE_URL}{url}', json=payload, headers=headers, timeout=10)
@@ -43,54 +121,34 @@ def api_post(cookie, url, payload):
         return {'code': '500', 'msg': str(e)}
 
 
+def detect_user(cookie, user_id):
+    """从已有日报反查用户姓名"""
+    result = api_post(cookie, '/api/dailyReport/list',
+                      {'pageNum': 1, 'pageSize': 1, 'userId': user_id})
+    if result.get('code') == '200':
+        items = result['info'].get('list', [])
+        if items:
+            return items[0]['userCompellation']
+    return ''
+
+
 def select_excel():
-    """Windows原生文件对话框，不依赖tkinter"""
-    import ctypes
-    from ctypes import wintypes, c_char_p
-
-    OPENFILENAME = ctypes.Structure(
-        '_OPENFILENAME' if ctypes.sizeof(ctypes.c_void_p) == 4 else '_OPENFILENAMEW',
-        [
-            ('lStructSize', wintypes.DWORD),
-            ('hwndOwner', wintypes.HWND),
-            ('hInstance', wintypes.HINSTANCE),
-            ('lpstrFilter', c_char_p),
-            ('lpstrCustomFilter', c_char_p),
-            ('nMaxCustFilter', wintypes.DWORD),
-            ('nFilterIndex', wintypes.DWORD),
-            ('lpstrFile', ctypes.c_char_p),
-            ('nMaxFile', wintypes.DWORD),
-            ('lpstrFileTitle', c_char_p),
-            ('nMaxFileTitle', wintypes.DWORD),
-            ('lpstrInitialDir', c_char_p),
-            ('lpstrTitle', c_char_p),
-            ('Flags', wintypes.DWORD),
-            ('nFileOffset', wintypes.WORD),
-            ('nFileExtension', wintypes.WORD),
-            ('lpstrDefExt', c_char_p),
-            ('lCustData', ctypes.c_void_p),
-            ('lpfnHook', ctypes.c_void_p),
-            ('lpTemplateName', c_char_p),
-        ],
+    """tk文件对话框选择Excel文件"""
+    import tkinter as tk
+    from tkinter import filedialog
+    root = tk.Tk()
+    root.withdraw()
+    path = filedialog.askopenfilename(
+        title='选择周报Excel',
+        filetypes=[('Excel', '*.xlsx *.xls')],
+        initialdir=APP_DIR,
     )
-
-    buf = ctypes.create_string_buffer(1024)
-    buf.value = b'\x00'
-    ofn = OPENFILENAME()
-    ofn.lStructSize = ctypes.sizeof(ofn)
-    ofn.lpstrFilter = b'Excel\x00*.xlsx;*.xls\x00\x00'
-    ofn.lpstrFile = buf
-    ofn.nMaxFile = 1024
-    ofn.lpstrInitialDir = SCRIPT_DIR.encode('mbcs')
-    ofn.lpstrTitle = b'\xd1\xa1\xd4\xf1\x00'
-    ofn.Flags = 0x00001000  # OFN_EXPLORER
-
-    if ctypes.windll.comdlg32.GetOpenFileNameA(ctypes.byref(ofn)):
-        return buf.value.decode('mbcs')
-    return None
+    root.destroy()
+    return path
 
 
 def read_excel(path):
+    import pandas as pd
     df = pd.read_excel(path, header=0)
     records = []
     for _, row in df.iterrows():
@@ -100,15 +158,29 @@ def read_excel(path):
         work_content = row.iloc[4]
         note = row.iloc[5]
 
-        if pd.isna(date_val):
+        # 跳过非数据行："下周工作计划"/"本周工作重点" 可能出现在列0或列1
+        col0 = str(row.iloc[0]).strip()
+        col1 = str(date_val).strip() if pd.notna(date_val) else ''
+        if col0 in ('下周工作计划', '本周工作重点') or col1 in ('下周工作计划', '本周工作计划'):
             continue
-        weekday = str(row.iloc[0]).strip()
-        if weekday in ('下周工作计划', '本周工作重点'):
+
+        if pd.isna(date_val):
             continue
         if pd.isna(status):
             continue
 
-        date_str = date_val.strftime('%Y-%m-%d') if isinstance(date_val, datetime) else str(date_val)[:10]
+        # 日期解析：兼容 datetime 对象和 "2026.1.1" / "2026-01-01" 字符串
+        if isinstance(date_val, datetime):
+            date_str = date_val.strftime('%Y-%m-%d')
+        else:
+            raw = str(date_val).strip()
+            # 统一将 "." 和 "/" 替换为 "-" 再解析
+            normalized = raw.replace('.', '-').replace('/', '-')
+            try:
+                date_str = datetime.strptime(normalized[:10], '%Y-%m-%d').strftime('%Y-%m-%d')
+            except ValueError:
+                continue  # 无法解析的日期行，跳过
+
         status = str(status).strip()
 
         code = str(project_code).strip() if pd.notna(project_code) else ''
@@ -149,17 +221,17 @@ def fetch_projects(cookie):
     return []
 
 
-def fetch_existing(cookie, date_str):
+def fetch_existing(cookie, date_str, user_id):
     result = api_post(cookie, '/api/dailyReport/list',
-                      {'pageNum': 1, 'pageSize': 10, 'workDate': date_str, 'userId': USER_ID})
+                      {'pageNum': 1, 'pageSize': 10, 'workDate': date_str, 'userId': user_id})
     if result.get('code') == '200':
         for item in result['info'].get('list', []):
-            if item['userId'] == USER_ID and item['workDate'] == date_str:
+            if item['userId'] == user_id and item['workDate'] == date_str:
                 return item
     return None
 
 
-def submit_add(cookie, date, duration, matters, project, task):
+def submit_add(cookie, date, duration, matters, project, task, user_id, user_name):
     task_list = project.get('projectTaskList', [])
     item = {
         'key': '000',
@@ -168,7 +240,7 @@ def submit_add(cookie, date, duration, matters, project, task):
         'workDate': date,
         'projectId': project['id'],
         'workOvertime': '',
-        'userCompellation': USER_NAME,
+        'userCompellation': user_name,
         'isOverTime': False,
         'taskId': task['id'],
         'taskList': task_list,
@@ -178,13 +250,13 @@ def submit_add(cookie, date, duration, matters, project, task):
         'projectCode': project['projectCode'],
         'projectUsername': '',
         'projectUserName': project.get('userName', ''),
-        'userId': USER_ID,
+        'userId': user_id,
         'auditing': 0,
     }
     return api_post(cookie, '/api/dailyReport/add', [item])
 
 
-def submit_update(cookie, existing, date, duration, matters, project, task):
+def submit_update(cookie, existing, date, duration, matters, project, task, user_id, user_name):
     task_list = project.get('projectTaskList', [])
     payload = {
         'id': existing['id'],
@@ -198,12 +270,12 @@ def submit_update(cookie, existing, date, duration, matters, project, task):
         'projectLeader': existing.get('projectLeader'),
         'taskId': task['id'],
         'taskName': task['taskName'],
-        'userId': USER_ID,
-        'userCompellation': USER_NAME,
+        'userId': user_id,
+        'userCompellation': user_name,
         'createTime': existing.get('createTime'),
         'updateTime': existing.get('updateTime'),
         'auditing': existing.get('auditing', 0),
-        'createBy': existing.get('createBy', USER_ID),
+        'createBy': existing.get('createBy', user_id),
         'deleted': existing.get('deleted'),
         'project': {
             'id': project['id'],
@@ -238,62 +310,98 @@ def submit_update(cookie, existing, date, duration, matters, project, task):
     return api_post(cookie, '/api/dailyReport/update', payload)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='工时自动填报')
+    parser.add_argument('-f', '--file', help='周报Excel路径（省略则弹出文件对话框）')
+    parser.add_argument('-s', '--start', help='起始日期 MMDD，如 0212')
+    parser.add_argument('-e', '--end', help='结束日期 MMDD，如 0212')
+    parser.add_argument('--uid', type=int, default=0, help='用户ID（默认从cookie的token字段提取）')
+    parser.add_argument('--name', default='', help='用户姓名（默认自动反查）')
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+
     print('=' * 50)
     print('  工时自动填报工具')
     print('=' * 50)
+
+    # ===== 阶段1：纯文本交互，零延迟 =====
 
     # Cookie
     cookie = load_cookie()
     if not cookie:
         print(f'\n首次使用，请输入Cookie')
-        print('（浏览器Console执行 copy(document.cookie) 获取）')
-        cookie = input('Cookie: ').strip()
+        cookie = input_cookie()
         if not cookie:
             print('Cookie不能为空')
             return
-        # 验证
-        result = api_post(cookie, '/api/project/list',
-                          {'pageNum': 1, 'pageSize': 1, 'projectType': 1})
-        if result.get('code') != '200':
-            print('Cookie无效')
+
+    # 从 cookie 的 token= 字段提取 userId
+    user_id = args.uid or extract_uid_from_cookie(cookie)
+
+    # Excel路径：命令行指定 或 弹出文件选择
+    excel_path = args.file
+
+    # 日期范围（在 tkinter 之前问完）
+    start = args.start
+    end = args.end
+    if not start and not end:
+        year = datetime.now().strftime('%Y')
+        print(f'\n年份: {year}，输入日期范围（回车=全部）：')
+        start = input('  起始 (MMDD): ').strip()
+        end = input('  结束 (MMDD): ').strip()
+
+    # ===== 阶段2：需要 tkinter 的操作（仅路径未确定时）=====
+    if not excel_path:
+        print('请选择文件...')
+        excel_path = select_excel()
+        if not excel_path:
+            print('未选择文件')
             return
-        save_cookie(cookie)
-        print('Cookie已保存')
-    else:
-        print(f'\n从 {COOKIE_FILE} 读取Cookie')
-        # 验证
+
+    # ===== 阶段3：加载重模块 + 网络请求 =====
+    print('加载中...')
+
+    # Cookie 验证
+    result = api_post(cookie, '/api/project/list',
+                      {'pageNum': 1, 'pageSize': 1, 'projectType': 1})
+    if result.get('code') != '200':
+        print('Cookie无效或已过期，请重新输入')
+        cookie = input_cookie()
         result = api_post(cookie, '/api/project/list',
                           {'pageNum': 1, 'pageSize': 1, 'projectType': 1})
         if result.get('code') != '200':
-            print('Cookie已过期，请重新输入')
-            cookie = input('Cookie: ').strip()
-            result = api_post(cookie, '/api/project/list',
-                              {'pageNum': 1, 'pageSize': 1, 'projectType': 1})
-            if result.get('code') != '200':
-                print('Cookie仍然无效')
-                return
-            save_cookie(cookie)
-            print('Cookie已更新')
+            print('Cookie仍然无效')
+            return
+        # cookie 变了，重新提取 uid
+        user_id = args.uid or extract_uid_from_cookie(cookie)
+
+    save_cookie(cookie)
     print('Cookie OK')
 
-    # 选择Excel文件
-    excel_path = select_excel()
-    if not excel_path:
-        print('未选择文件')
-        return
-    print(f'\n读取: {excel_path}')
+    # 确定用户身份
+    if not user_id:
+        user_id = extract_uid_from_cookie(cookie)
+    if args.name:
+        user_name = args.name
+    else:
+        user_name = detect_user(cookie, user_id) if user_id else ''
+    if not user_name:
+        user_name = input('请输入姓名: ').strip()
+    print(f'用户: {user_name} (ID={user_id})')
+
+    # 读取Excel
+    print(f'读取: {excel_path}')
     records = read_excel(excel_path)
     if not records:
         print('无有效记录')
         return
     print(f'共 {len(records)} 个工作日 ({records[0]["date"]} ~ {records[-1]["date"]})')
 
-    # 日期范围
+    # 日期过滤（year 从 Excel 数据覆盖）
     year = records[0]['date'][:4]
-    print(f'\n年份: {year}，输入日期范围（回车=全部）：')
-    start = input('  起始 (MMDD): ').strip()
-    end = input('  结束 (MMDD): ').strip()
     if start:
         start = f'{year}-{start[:2]}-{start[2:]}' if len(start) == 4 else start
         records = [r for r in records if r['date'] >= start]
@@ -343,22 +451,25 @@ def main():
         tasks = project.get('projectTaskList', [])
         task = tasks[0] if tasks else {'id': None, 'taskName': ''}
 
-        existing = fetch_existing(cookie, r['date'])
+        existing = fetch_existing(cookie, r['date'], user_id)
         if existing:
-            print(f'  [{i+1:>3}/{total}] UPDATE {r["date"]} (id={existing["id"]}) [{code}]')
-            result = submit_update(cookie, existing, r['date'], r['duration'], r['matters'], project, task)
+            # 已审核的记录不可修改，跳过
+            if existing.get('auditing') == 1:
+                print(f'  [{i+1:>3}/{total}] SKIP {r["date"]} (已审核，不可修改)')
+                time.sleep(0.3)
+                continue
+            result = submit_update(cookie, existing, r['date'], r['duration'], r['matters'], project, task, user_id, user_name)
         else:
-            print(f'  [{i+1:>3}/{total}] ADD    {r["date"]} [{code}]')
-            result = submit_add(cookie, r['date'], r['duration'], r['matters'], project, task)
+            result = submit_add(cookie, r['date'], r['duration'], r['matters'], project, task, user_id, user_name)
 
         if result.get('code') == '200':
             success += 1
-            print(f'           OK')
+            print(f'  [{i+1:>3}/{total}] OK {r["date"]} [{code}]')
         else:
             fail_list.append(r['date'])
-            msg = result.get('msg', str(result))
-            info = result.get('info', '')
-            print(f'           FAIL: {msg} | {info}')
+            # 优先显示 info（服务端真实原因），其次 msg
+            msg = result.get('info') or result.get('msg') or str(result)
+            print(f'  [{i+1:>3}/{total}] FAIL {r["date"]}: {msg}')
         time.sleep(0.3)
 
     print(f'\n完成: 成功 {success}, 失败 {len(fail_list)}')

@@ -13,7 +13,7 @@ category: python
 4. **左侧点一个请求** → 右侧点 `Headers`（标头）
 5. **往下滚找到 `Request Headers`** → 复制 `Cookie:` 后面的整串值
 
-![F12 Network 面板获取 Cookie](/assets/images/cookie-devtools.png)
+<img src="/assets/image-20260609154412183.png" alt="image-20260609154412183">
 
 完事。
 

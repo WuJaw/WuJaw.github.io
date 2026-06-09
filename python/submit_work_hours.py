@@ -44,18 +44,50 @@ def api_post(cookie, url, payload):
 
 
 def select_excel():
-    """tk文件对话框选择Excel文件"""
-    import tkinter as tk
-    from tkinter import filedialog
-    root = tk.Tk()
-    root.withdraw()
-    path = filedialog.askopenfilename(
-        title='选择周报Excel',
-        filetypes=[('Excel', '*.xlsx *.xls')],
-        initialdir=SCRIPT_DIR,
+    """Windows原生文件对话框，不依赖tkinter"""
+    import ctypes
+    from ctypes import wintypes, c_char_p
+
+    OPENFILENAME = ctypes.Structure(
+        '_OPENFILENAME' if ctypes.sizeof(ctypes.c_void_p) == 4 else '_OPENFILENAMEW',
+        [
+            ('lStructSize', wintypes.DWORD),
+            ('hwndOwner', wintypes.HWND),
+            ('hInstance', wintypes.HINSTANCE),
+            ('lpstrFilter', c_char_p),
+            ('lpstrCustomFilter', c_char_p),
+            ('nMaxCustFilter', wintypes.DWORD),
+            ('nFilterIndex', wintypes.DWORD),
+            ('lpstrFile', ctypes.c_char_p),
+            ('nMaxFile', wintypes.DWORD),
+            ('lpstrFileTitle', c_char_p),
+            ('nMaxFileTitle', wintypes.DWORD),
+            ('lpstrInitialDir', c_char_p),
+            ('lpstrTitle', c_char_p),
+            ('Flags', wintypes.DWORD),
+            ('nFileOffset', wintypes.WORD),
+            ('nFileExtension', wintypes.WORD),
+            ('lpstrDefExt', c_char_p),
+            ('lCustData', ctypes.c_void_p),
+            ('lpfnHook', ctypes.c_void_p),
+            ('lpTemplateName', c_char_p),
+        ],
     )
-    root.destroy()
-    return path
+
+    buf = ctypes.create_string_buffer(1024)
+    buf.value = b'\x00'
+    ofn = OPENFILENAME()
+    ofn.lStructSize = ctypes.sizeof(ofn)
+    ofn.lpstrFilter = b'Excel\x00*.xlsx;*.xls\x00\x00'
+    ofn.lpstrFile = buf
+    ofn.nMaxFile = 1024
+    ofn.lpstrInitialDir = SCRIPT_DIR.encode('mbcs')
+    ofn.lpstrTitle = b'\xd1\xa1\xd4\xf1\x00'
+    ofn.Flags = 0x00001000  # OFN_EXPLORER
+
+    if ctypes.windll.comdlg32.GetOpenFileNameA(ctypes.byref(ofn)):
+        return buf.value.decode('mbcs')
+    return None
 
 
 def read_excel(path):
@@ -313,17 +345,20 @@ def main():
 
         existing = fetch_existing(cookie, r['date'])
         if existing:
+            print(f'  [{i+1:>3}/{total}] UPDATE {r["date"]} (id={existing["id"]}) [{code}]')
             result = submit_update(cookie, existing, r['date'], r['duration'], r['matters'], project, task)
         else:
+            print(f'  [{i+1:>3}/{total}] ADD    {r["date"]} [{code}]')
             result = submit_add(cookie, r['date'], r['duration'], r['matters'], project, task)
 
         if result.get('code') == '200':
             success += 1
-            print(f'  [{i+1:>3}/{total}] OK {r["date"]} [{code}]')
+            print(f'           OK')
         else:
             fail_list.append(r['date'])
             msg = result.get('msg', str(result))
-            print(f'  [{i+1:>3}/{total}] FAIL {r["date"]}: {msg}')
+            info = result.get('info', '')
+            print(f'           FAIL: {msg} | {info}')
         time.sleep(0.3)
 
     print(f'\n完成: 成功 {success}, 失败 {len(fail_list)}')

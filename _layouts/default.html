@@ -119,12 +119,6 @@
     font-size: var(--fs-h3);
     font-weight: 700;
     color: var(--ink);
-    text-decoration: none;
-    transition: opacity 0.15s;
-  }
-
-  a.cat-name:hover {
-    opacity: 0.7;
   }
 
   .cat-count {
@@ -605,7 +599,7 @@
       {% assign cat_name = category[0] %}
       {% unless site.hidden_categories contains cat_name %}
       {% assign cat_posts = category[1] | sort: "date" | reverse %}
-    <li class="toc-h2"><a href="{{ site.baseurl }}/categories/{{ cat_name | url_encode }}/">{{ cat_name }}</a></li>
+    <li class="toc-h2"><a href="javascript:void(0)">{{ cat_name }}</a></li>
       {% for post in cat_posts %}
     <li class="toc-h3"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
       {% endfor %}

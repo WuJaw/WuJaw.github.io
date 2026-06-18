@@ -121,6 +121,15 @@
     color: var(--ink);
   }
 
+  .cat-name-link {
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .cat-name-link:hover {
+    color: var(--quiet);
+  }
+
   .cat-count {
     font-size: var(--fs-meta);
     color: var(--quiet);
@@ -511,12 +520,39 @@
     margin-bottom: 10px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
   }
+
+  .toc-title-text { cursor: pointer; }
+
+  .toc-toggle-btn {
+    cursor: pointer;
+    font-size: var(--fs-caption);
+    color: var(--quiet);
+    background: none;
+    border: none;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.15s, transform 0.3s;
+  }
+
+  .toc-toggle-btn:hover { color: var(--ink); }
+  .toc-toggle-btn.collapsed { transform: rotate(-90deg); }
 
   .toc-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    transition: max-height 0.3s ease, opacity 0.2s;
+    overflow: hidden;
+  }
+
+  .toc-list.collapsed {
+    max-height: 0 !important;
+    opacity: 0;
   }
 
   .toc-list li {
@@ -539,6 +575,56 @@
     color: var(--ink);
   }
 
+  /* === 站点目录 — 可折叠分类 === */
+  .toc-cat-group { margin: 0; }
+
+  .toc-cat-toggle {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 4px 0;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    cursor: default;
+    user-select: none;
+  }
+
+  .toc-cat-link {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .toc-cat-link:hover { color: var(--quiet); }
+
+  .toc-cat-arrow {
+    display: inline-block;
+    font-size: 8px;
+    margin-right: 5px;
+    line-height: 1;
+    transition: transform 0.2s;
+    color: var(--quiet);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .toc-cat-group.open > .toc-cat-toggle > .toc-cat-arrow {
+    transform: rotate(90deg);
+  }
+
+  .toc-sub-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .toc-cat-group.open > .toc-sub-list {
+    max-height: 2000px;
+  }
+
   /* h2 — 分类/大标题（两侧一致） */
   .toc-list .toc-h2 > a {
     padding-top: 10px;
@@ -553,6 +639,11 @@
     font-size: var(--fs-meta);
   }
 
+  .toc-sub-list .toc-h3 > a {
+    padding-left: 16px;
+    font-size: var(--fs-meta);
+  }
+
   /* 站点目录 — 回到首页 */
   .site-nav .toc-home > a {
     color: var(--quiet);
@@ -563,7 +654,8 @@
   }
 
   /* 当前激活项 */
-  .toc-list a.active {
+  .toc-list a.active,
+  .toc-sub-list a.active {
     color: var(--ink);
     font-weight: 600;
   }
@@ -592,22 +684,52 @@
 {% if site.features.site_nav %}
 {% unless page.url == "/" or page.url == "/index.html" %}
 <nav class="site-nav" aria-label="站点目录">
-  <div class="toc-title">目录</div>
-  <ul class="toc-list">
+  <div class="toc-title">
+    <span class="toc-title-text" onclick="toggleAllSiteNav(this)" title="全部折叠/展开">目录</span>
+  </div>
+  <div class="toc-list" id="site-nav-list">
     {% assign sorted_cats = site.categories | sort %}
     {% for category in sorted_cats %}
       {% assign cat_name = category[0] %}
       {% unless site.hidden_categories contains cat_name %}
       {% assign cat_posts = category[1] | sort: "date" | reverse %}
-    <li class="toc-h2"><a href="javascript:void(0)">{{ cat_name }}</a></li>
+      <!-- 检查当前页面是否属于该分类，是则默认展开 -->
+      {% assign is_active_cat = false %}
       {% for post in cat_posts %}
-    <li class="toc-h3"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
+        {% if page.url == post.url %}{% assign is_active_cat = true %}{% break %}{% endif %}
       {% endfor %}
+    <div class="toc-cat-group{% if is_active_cat %} open{% endif %}">
+      <span class="toc-cat-toggle">
+        <span class="toc-cat-arrow" onclick="toggleCatGroup(this)">▶</span><a class="toc-cat-link" href="{{ site.baseurl }}/categories/{{ cat_name }}/">{{ cat_name }}</a>
+      </span>
+      <ul class="toc-sub-list">
+      {% for post in cat_posts %}
+        <li class="toc-h3"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
       {% endunless %}
     {% endfor %}
-    <li class="toc-home"><a href="{{ site.baseurl }}/">← 回到首页</a></li>
-  </ul>
+    <div class="toc-home"><a href="{{ site.baseurl }}/">← 回到首页</a></div>
+  </div>
 </nav>
+<script>
+function toggleCatGroup(arrow) {
+  var group = arrow.closest('.toc-cat-group');
+  if (group) group.classList.toggle('open');
+}
+
+function toggleAllSiteNav(el) {
+  var list = document.getElementById('site-nav-list');
+  var groups = list.querySelectorAll('.toc-cat-group');
+  var anyOpen = false;
+  groups.forEach(function(g) { if (g.classList.contains('open')) anyOpen = true; });
+  groups.forEach(function(g) {
+    if (anyOpen) g.classList.remove('open');
+    else g.classList.add('open');
+  });
+}
+</script>
 {% endunless %}
 {% endif %}
 

@@ -12,14 +12,21 @@ layout: default
 
 {% if site.features.toc %}
 <!-- 右侧大纲 TOC -->
-<nav class="toc-panel" id="toc-panel" aria-label="文章大纲"></nav>
+<nav class="toc-panel" id="toc-panel" aria-label="文章大纲">
+  <div class="toc-title">
+    <span class="toc-title-text" id="toc-title-text">大纲</span>
+    <button class="toc-toggle-btn" id="toc-toggle-btn" onclick="toggleToc()" title="折叠/展开">▼</button>
+  </div>
+  <div class="toc-list" id="toc-list"></div>
+</nav>
 {% endif %}
 
 <script>
 (function () {
   var panel = document.getElementById('toc-panel');
+  var tocList = document.getElementById('toc-list');
   var content = document.querySelector('.post-content');
-  if (!panel || !content) return;
+  if (!panel || !tocList || !content) return;
 
   // 收集 h2 / h3
   var headings = Array.from(content.querySelectorAll('h2, h3'));
@@ -33,15 +40,14 @@ layout: default
   });
 
   // 构建 TOC HTML
-  var html = '<div class="toc-title">大纲</div><ul class="toc-list">';
+  var html = '<ul class="toc-list-inner">';
   headings.forEach(function (h) {
     var cls = ' class="' + (h.tagName === 'H3' ? 'toc-h3' : 'toc-h2') + '"';
-    // 取文字，去掉可能的行内 HTML 标签
     var text = h.textContent.trim();
     html += '<li' + cls + '><a href="#' + h.id + '">' + text + '</a></li>';
   });
   html += '</ul>';
-  panel.innerHTML = html;
+  tocList.innerHTML = html;
 
   // 高亮当前章节
   var links = Array.from(panel.querySelectorAll('a'));
@@ -73,6 +79,13 @@ layout: default
       }
     });
   });
+
+  // 折叠/展开切换
+  window.toggleToc = function() {
+    tocList.classList.toggle('collapsed');
+    var btn = document.getElementById('toc-toggle-btn');
+    if (btn) btn.classList.toggle('collapsed');
+  };
 })();
 </script>
 

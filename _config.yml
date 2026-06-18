@@ -30,14 +30,7 @@ exclude:
   - README.md
   - Gemfile
   - Gemfile.lock
-  - categories/
 
 # 插件（GitHub Pages 支持）
 plugins:
   - jekyll-feed
-
-# 分类归档页（collection）
-collections:
-  catpages:
-    output: true
-    permalink: /categories/:name/

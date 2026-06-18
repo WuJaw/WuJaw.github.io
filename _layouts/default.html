@@ -121,15 +121,6 @@
     color: var(--ink);
   }
 
-  .cat-name-link {
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-
-  .cat-name-link:hover {
-    color: var(--quiet);
-  }
-
   .cat-count {
     font-size: var(--fs-meta);
     color: var(--quiet);
@@ -700,7 +691,7 @@
       {% endfor %}
     <div class="toc-cat-group{% if is_active_cat %} open{% endif %}">
       <span class="toc-cat-toggle">
-        <span class="toc-cat-arrow" onclick="toggleCatGroup(this)">▶</span><a class="toc-cat-link" href="{{ site.baseurl }}/categories/{{ cat_name }}/">{{ cat_name }}</a>
+        <span class="toc-cat-arrow" onclick="toggleCatGroup(this)">▶</span><span class="toc-cat-link">{{ cat_name }}</span>
       </span>
       <ul class="toc-sub-list">
       {% for post in cat_posts %}

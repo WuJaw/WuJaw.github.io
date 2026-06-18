@@ -9,13 +9,22 @@ WuJaw.github.io/
 ├── _config.yml          # Jekyll 配置
 ├── _layouts/
 │   ├── default.html     # 通用布局（含全部 CSS）
-│   └── post.html        # 文章布局
+│   ├── post.html        # 文章布局
+│   └── category.html    # 分类归档页布局（2026-06-17 新增）
 ├── _posts/              # Markdown 文章放这里
+├── categories/          # 各分类归档页（2026-06-17 新增）
+│   ├── ADC验证.md / python.md / 博客.md / 定位.md
+│   ├── 工具.md / 操作手册.md / 物联网.md / 送检.md
+│   └── permalink 格式：/categories/分类名/
 ├── posts/               # 旧 HTML 文章（保留）
-└── index.html           # 首页（分类卡片视图）
+└── index.html           # 首页（分类卡片视图，标题可点击跳转分类页）
 ```
 
 已删除：`articles.html`、`about.html`。已移除页头 logo、页脚、导航栏、主题切换。
+
+## 分类归档页
+
+首页分类卡片标题点击后跳转到 `/categories/分类名/`，显示该分类下所有文章（时间倒序）。左侧站点导航的分类名也是链接。layout 文件 `_layouts/category.html`，无需额外插件，GitHub Pages 原生支持。
 
 ## 写文章规范
 

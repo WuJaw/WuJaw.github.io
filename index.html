@@ -16,7 +16,7 @@ title: 文章
     {% assign cat_posts = category[1] | sort: "date" | reverse %}
   <div class="cat-card" data-category="{{ cat_name | escape }}">
     <div class="cat-card-header">
-      <span class="cat-name">{{ cat_name }}</span>
+      <a class="cat-name" href="{{ site.baseurl }}/categories/{{ cat_name | url_encode }}/">{{ cat_name }}</a>
       <span class="cat-count">{{ cat_posts | size }} 篇</span>
     </div>
     <ul class="cat-articles">

@@ -19,45 +19,38 @@ category: CH592
 
 WCH-LinkE 仿真器通过 SWD 接口连接 CH592F，共 4 根线：
 
-| 仿真器 | CH592F |
-|--------|--------|
 | VCC (3.3V) | VCC |
+|--------|--------|
+| 仿真器 | CH592F |
 | GND | GND |
 | SWDIO | SWDIO |
 | SWCLK | SWCLK |
 
-- 仿真器 LED 常亮表示已连接
+
+
 - 目标板需独立供电或由仿真器供电（电流不超过 200mA）
 
 ---
 
-## 3 工程配置
-
-右键项目 → **Properties** → **MCU Settings**：
-
-- **Target**：选择 `CH592F`
-- **Debugger**：选择 `WCH-Link`
-- **Flash Algorithm** 页：勾选对应的编程算法
-
----
-
-## 4 编译
+## 3 编译
 
 **Project → Build All**（快捷键 `Ctrl + B`），确保 Console 输出 **0 errors**。
 
 ---
 
-## 5 调试配置
+## 4 调试配置
 
-**Run → Debug Configurations** → 双击 "GDB WCH-Link Debugging" 新建一个配置：
+**Run → Debug Configurations** → 双击 "GDB OpenOCD MRS Debugging" 新建一个配置：
 
 - **Main** 选项卡：`C/C++ Application` 指向编译输出的 `.elf` 文件（在 `obj/` 目录下）
 - **Debugger** 选项卡：`OpenOCD` 配置路径通常自动填入，无需手动修改
 - 首次使用需新建配置，后续直接复用
 
+<img src="/assets/image-20260623110447127.png" alt="image-20260623110447127">
+
 ---
 
-## 6 进入调试
+## 5 进入调试
 
 点击 **Debug** 按钮，MRS 自动：
 
@@ -67,7 +60,7 @@ WCH-LinkE 仿真器通过 SWD 接口连接 CH592F，共 4 根线：
 
 ---
 
-## 7 常用调试操作
+## 6 常用调试操作
 
 | 操作 | 快捷键 | 说明 |
 |------|--------|------|
@@ -80,7 +73,7 @@ WCH-LinkE 仿真器通过 SWD 接口连接 CH592F，共 4 根线：
 
 ---
 
-## 8 常用调试图口
+## 7 常用调试图口
 
 - **Variables**：查看当前作用域变量值
 - **Expressions**：添加自定义表达式监视
@@ -93,7 +86,7 @@ WCH-LinkE 仿真器通过 SWD 接口连接 CH592F，共 4 根线：
 
 ---
 
-## 9 烧录
+## 8 烧录
 
 - Debug 会话会自动烧录固件
 - 单独烧录用 **Flash → Download**
@@ -101,7 +94,7 @@ WCH-LinkE 仿真器通过 SWD 接口连接 CH592F，共 4 根线：
 
 ---
 
-## 10 CH592F 特殊注意事项
+## 9 CH592F 特殊注意事项
 
 1. **BLE 协议栈固件固化在 ROM 中**（地址 `0x0000`–`0x3FFF`），用户代码需要从 `0x4000` 开始，这部分区域不可擦写，调试时不用担心覆盖。
 

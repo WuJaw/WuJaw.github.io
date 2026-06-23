@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "bootloader 设置偏移(待验证)"
-date: 2026-06-22
+date: 2026-06-23
 category: CH592
 ---
 
@@ -20,8 +20,6 @@ category: CH592
 ### 1.2 `APP/include/ota.h` — Bootloader 大小宏
 
 **c**
-
-
 
 ```c
 #define BOOTLOADER_SIZE     (0xC000)    // bootloader最大空间

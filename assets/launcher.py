@@ -807,9 +807,7 @@ class LauncherApp(tk.Tk):
             self.lbl_ver_status.config(fg=TEXT_ERR)
             self._log("版本校验未通过", "warn")
 
-        # 写入 Excel（半成品测试无手动蓝牙输入）
-        self._write_to_excel()
-        # 解锁配置，保留信号和版本显示
+        # 半成品测试不写入 Excel
         self._unlock_config()
 
     # ─────────────────────────────────────────
@@ -857,7 +855,7 @@ class LauncherApp(tk.Tk):
             timeout_sec = int(self.var_ble_timeout.get())
         except (ValueError, TypeError):
             timeout_sec = 20
-        self._full_test_timeout_id = self.after(timeout_sec * 1000, self._on_full_test_timeout)
+        self._test_timeout_id = self.after(timeout_sec * 1000, self._on_test_timeout)
 
         threading.Thread(target=self._run_serial, args=(port,), daemon=True).start()
 
@@ -887,6 +885,12 @@ class LauncherApp(tk.Tk):
         self._show_version_panel()
         self.lbl_log_hint.config(text=f"半成品测试 → {port}")
         self._log(f"打开串口 {port} …", "info")
+        # 启动超时定时器
+        try:
+            timeout_sec = int(self.var_ble_timeout.get())
+        except (ValueError, TypeError):
+            timeout_sec = 20
+        self._test_timeout_id = self.after(timeout_sec * 1000, self._on_test_timeout)
 
         threading.Thread(target=self._run_serial, args=(port,), daemon=True).start()
 
@@ -1146,11 +1150,11 @@ class LauncherApp(tk.Tk):
             if self.proc and self.proc.poll() is None:
                 self.proc.terminate()
             self._log("已发送停止信号", "warn")
-        # 取消成品测试超时定时器
-        tid = getattr(self, "_full_test_timeout_id", None)
+        # 取消超时定时器
+        tid = getattr(self, "_test_timeout_id", None)
         if tid:
             self.after_cancel(tid)
-            self._full_test_timeout_id = None
+            self._test_timeout_id = None
         # 无论 running 是否已为 False，都执行清理（处理自动完成/超时的残留状态）
         self._stop_progress()
         self._hide_version_panel()
@@ -1505,9 +1509,9 @@ class LauncherApp(tk.Tk):
         # ── 解锁配置 ──
         self._unlock_config()
 
-    def _on_full_test_timeout(self):
-        """成品测试超时：N秒内未收到信号数据 → 记录超时 → 停止 → 解锁配置"""
-        self._full_test_timeout_id = None
+    def _on_test_timeout(self):
+        """测试超时：N秒内未收到信号数据 → 记录超时 → 停止 → 解锁配置"""
+        self._test_timeout_id = None
         # 关闭串口
         self.running = False
         # 取消进度条
@@ -1523,8 +1527,9 @@ class LauncherApp(tk.Tk):
         except (ValueError, TypeError):
             timeout_sec = 20
         self._log(f"{timeout_sec}秒内未收到蓝牙标签或微站数据 — 记录超时", "err")
-        # 写入 Excel：仅编号 + 备注
-        self._write_to_excel(timeout_remarks="蓝牙标签或微站没有数据上报")
+        # 半成品测试不写入 Excel
+        if self._test_mode != "semi":
+            self._write_to_excel(timeout_remarks="蓝牙标签或微站没有数据上报")
         # ── 解锁配置 ──
         self._unlock_config()
 
@@ -1586,12 +1591,12 @@ class LauncherApp(tk.Tk):
                     self._log_segments(segments)
                     # 仅信号行（蓝牙标签+数分微站号同时匹配）参与信号计算，版本行不参与
                     if self._is_signal_line(msg):
-                        # 成品测试：首次收到信号数据 → 取消超时定时器
-                        if self._test_mode == "full":
-                            tid = getattr(self, "_full_test_timeout_id", None)
+                        # 首次收到信号数据 → 取消超时定时器
+                        if self._test_mode in ("full", "semi"):
+                            tid = getattr(self, "_test_timeout_id", None)
                             if tid:
                                 self.after_cancel(tid)
-                                self._full_test_timeout_id = None
+                                self._test_timeout_id = None
                         if rssi is not None:
                             self._rssi_count += 1
                             self._rssi_values.append(rssi)

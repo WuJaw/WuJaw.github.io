@@ -75,10 +75,22 @@ def main():
         print(f"共 {len(lines)} 个文件")
 
         # push
+        # 获取当前分支名
+        branch_r = git("rev-parse", "--abbrev-ref", "HEAD")
+        branch = branch_r.stdout.strip()
+        if not branch or branch_r.returncode != 0:
+            branch = "main"
+
+        # 先尝试普通 push
         r = git("push")
         if r.returncode != 0:
-            print(f"\n推送失败: {r.stderr.strip()}")
-            sys.exit(1)
+            # 如果是无上游分支错误，自动设置并重试
+            if "no upstream branch" in r.stderr or "no upstream" in r.stderr.lower():
+                print(f"\n分支 {branch} 无上游，自动设置并重试...")
+                r = git("push", "--set-upstream", "origin", branch)
+            if r.returncode != 0:
+                print(f"\n推送失败: {r.stderr.strip()}")
+                sys.exit(1)
         print("推送成功。")
         print("=" * 50)
     finally:

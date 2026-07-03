@@ -28,7 +28,9 @@ secret_categories:
   - github
   - python
   - 博客
-  - ADC验证
+  - 工具
+  
+
 # 排除不需要编译的文件
 exclude:
   - README.md

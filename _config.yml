@@ -21,10 +21,14 @@ features:
   toc:           true   # 右侧文章大纲（TOC）
   copy_button:   true   # 代码块复制按钮
 
-# 隐藏分类 — 列在此处的分类不会出现在首页和左侧目录中
-hidden_categories:
-  - 博客1
-
+# 私密分类 — 列在此处的分类需要输入暗号解锁后才显示
+secret_categories:
+  - ADC验证
+  - CH592
+  - github
+  - python
+  - 博客
+  - ADC验证
 # 排除不需要编译的文件
 exclude:
   - README.md

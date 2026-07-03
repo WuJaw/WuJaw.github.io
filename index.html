@@ -11,24 +11,26 @@ title: 文章
 <div class="category-index">
   {% assign sorted_cats = site.categories | sort %}
   {% for category in sorted_cats %}
-    {% assign cat_name = category[0] %}
-    {% unless site.hidden_categories contains cat_name %}
-    {% assign cat_posts = category[1] | sort: "date" | reverse %}
-  <div class="cat-card" data-category="{{ cat_name | escape }}">
+  {% assign cat_name = category[0] %}
+  {% assign cat_posts = category[1] | sort: "date" | reverse %}
+  {% assign is_secret_cat = false %}
+  {% if site.secret_categories contains cat_name %}
+  {% assign is_secret_cat = true %}
+  {% endif %}
+  <div class="cat-card{% if is_secret_cat %} secret-cat{% endif %}" data-category="{{ cat_name | escape }}">
     <div class="cat-card-header">
       <span class="cat-name">{{ cat_name }}</span>
       <span class="cat-count">{{ cat_posts | size }} 篇</span>
     </div>
     <ul class="cat-articles">
       {% for post in cat_posts %}
-      <li data-title="{{ post.title | escape }}" data-category="{{ cat_name | escape }}">
+      <li data-title="{{ post.title | escape }}" data-category="{{ cat_name | escape }}"{% if is_secret_cat or post.secret %} class="secret-post"{% endif %}>
         <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         <span class="cat-date">{{ post.date | date: "%Y-%m-%d" }}</span>
       </li>
       {% endfor %}
     </ul>
   </div>
-    {% endunless %}
   {% endfor %}
 </div>
 
@@ -38,30 +40,75 @@ title: 文章
   var cards = document.querySelectorAll('.cat-card');
   var items = document.querySelectorAll('.cat-articles li');
 
+  /* === 隐藏文章解锁机制 === */
+  function djb2(str) {
+    var h = 5381;
+    for (var i = 0; i < str.length; i++) {
+      h = ((h << 5) + h) + str.charCodeAt(i);
+      h = h & 0x7fffffff;
+    }
+    return h;
+  }
+  // 默认暗号: open-sesame
+  // 修改方法: 浏览器控制台执行 djb2('你的暗号') 把返回值填到下面
+  var SECRET_HASH = 406863714;
+
+  function isUnlocked() {
+    return document.body.classList.contains('secret-unlocked');
+  }
+
+  if (localStorage.getItem('secret_unlocked') === '1') {
+    document.body.classList.add('secret-unlocked');
+  }
+
   function filter() {
     var q = input.value.trim().toLowerCase();
+    var unlocked = isUnlocked();
 
     items.forEach(function(item) {
       var title = (item.getAttribute('data-title') || '').toLowerCase();
       var cat = (item.getAttribute('data-category') || '').toLowerCase();
-      if (!q || title.indexOf(q) >= 0 || cat.indexOf(q) >= 0) {
-        item.classList.remove('hidden');
-      } else {
-        item.classList.add('hidden');
-      }
+      var isSecret = item.classList.contains('secret-post');
+
+      var show = true;
+      if (isSecret && !unlocked) show = false;
+      if (q && title.indexOf(q) < 0 && cat.indexOf(q) < 0) show = false;
+
+      if (show) item.classList.remove('hidden');
+      else item.classList.add('hidden');
     });
 
-    // 隐藏空分类卡片
+    // 隐藏空分类卡片 + 修正计数
     cards.forEach(function(card) {
       var visible = card.querySelectorAll('.cat-articles li:not(.hidden)');
-      if (visible.length === 0) {
-        card.classList.add('hidden');
-      } else {
-        card.classList.remove('hidden');
+      if (visible.length === 0) card.classList.add('hidden');
+      else card.classList.remove('hidden');
+
+      var total = card.querySelectorAll('.cat-articles li').length;
+      var secretNum = card.querySelectorAll('.cat-articles li.secret-post').length;
+      var countEl = card.querySelector('.cat-count');
+      if (countEl) {
+        var displayCount = unlocked ? total : (total - secretNum);
+        countEl.textContent = displayCount + ' 篇';
       }
     });
   }
 
-  input.addEventListener('input', filter);
+  input.addEventListener('input', function() {
+    var val = input.value.trim();
+    if (val && djb2(val) === SECRET_HASH) {
+      if (isUnlocked()) {
+        document.body.classList.remove('secret-unlocked');
+        localStorage.removeItem('secret_unlocked');
+      } else {
+        document.body.classList.add('secret-unlocked');
+        localStorage.setItem('secret_unlocked', '1');
+      }
+      input.value = '';
+    }
+    filter();
+  });
+
+  filter();
 })();
 </script>

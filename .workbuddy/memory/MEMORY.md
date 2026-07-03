@@ -31,6 +31,12 @@ WuJaw.github.io/
 
 首页顶部有纯前端搜索框，输入文字实时过滤文章标题和分类名，空分类卡片自动隐藏。
 
+## 隐藏文章功能
+
+`_config.yml` 中 `secret_categories` 列出需要暗号解锁的分类（原"博客1"已归入此类）。前端在搜索框输入暗号（默认 `open-sesame`）切换解锁，存 localStorage。
+
+已废弃 `hidden_categories`，统一为 `secret_categories`。文章 front matter 也可单独加 `secret: true`。
+
 ## 图片方案
 
 Typora 写文章用 `![x](../assets/x.png)`，push 前用 `change/fix_img_path.py` 转为 `<img src="/assets/x.png">`，继续编辑用 `change/fix_img_reverse.py` 转回。图片统一放 `assets/` 目录。配套 `change/typora.bat` 和 `change/web.bat` 双击运行。

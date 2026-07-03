@@ -93,6 +93,14 @@
     display: none;
   }
 
+  /* ========== 隐藏文章（侧边栏） ========== */
+  .toc-sub-list li.secret-post {
+    display: none;
+  }
+  body.secret-unlocked .toc-sub-list li.secret-post {
+    display: list-item;
+  }
+
   /* ========== 分类索引页 ========== */
   .category-index {
     display: flex;
@@ -693,6 +701,12 @@
 </head>
 <body>
 
+<script>
+if (localStorage.getItem('secret_unlocked') === '1') {
+  document.body.classList.add('secret-unlocked');
+}
+</script>
+
 
 {% if site.features.site_nav %}
 {% unless page.url == "/" or page.url == "/index.html" %}
@@ -704,24 +718,26 @@
     {% assign sorted_cats = site.categories | sort %}
     {% for category in sorted_cats %}
       {% assign cat_name = category[0] %}
-      {% unless site.hidden_categories contains cat_name %}
       {% assign cat_posts = category[1] | sort: "date" | reverse %}
       <!-- 检查当前页面是否属于该分类，是则默认展开 -->
       {% assign is_active_cat = false %}
       {% for post in cat_posts %}
         {% if page.url == post.url %}{% assign is_active_cat = true %}{% break %}{% endif %}
       {% endfor %}
+      {% assign is_secret_cat = false %}
+      {% if site.secret_categories contains cat_name %}
+      {% assign is_secret_cat = true %}
+      {% endif %}
     <div class="toc-cat-group{% if is_active_cat %} open{% endif %}">
       <span class="toc-cat-toggle">
         <span class="toc-cat-arrow" onclick="toggleCatGroup(this)">▶</span><span class="toc-cat-link">{{ cat_name }}</span>
       </span>
       <ul class="toc-sub-list">
       {% for post in cat_posts %}
-        <li class="toc-h3"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
+        <li class="toc-h3{% if is_secret_cat or post.secret %} secret-post{% endif %}"><a href="{{ post.url | prepend: site.baseurl }}"{% if page.url == post.url %} class="active"{% endif %}>{{ post.title }}</a></li>
       {% endfor %}
       </ul>
     </div>
-      {% endunless %}
     {% endfor %}
     <div class="toc-home"><a href="{{ site.baseurl }}/">← 回到首页</a></div>
   </div>

@@ -23,12 +23,9 @@ features:
 
 # 私密分类 — 列在此处的分类需要输入暗号解锁后才显示
 secret_categories:
-  - ADC验证
-  - CH592
-  - github
-  - python
+  - 编程
   - 博客
-  - 工具
+  
   
 
 # 排除不需要编译的文件

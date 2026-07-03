@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "浏览器登录后获取Cookie"
+title: "python：浏览器登录后获取Cookie"
 date: 2026-06-09
-category: python
+category: 编程
 ---
 
 ## 1 步骤

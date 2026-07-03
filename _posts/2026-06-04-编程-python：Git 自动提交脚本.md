@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Git 自动提交脚本"
+title: "python：Git 自动提交脚本"
 date: 2026-06-04
-category: python
+category: 编程
 ---
 
 每次改完代码要 `git add` → `git commit` → `git push`，敲三句命令不可怕，可怕的是 commit message 写什么。顺手写 `update` 太敷衍，写详细又不想费脑子。

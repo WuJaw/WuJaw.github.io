@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "周报Excel项目编码自动填写"
+title: "python：周报Excel项目编码自动填写"
 date: 2026-06-09
-category: python
+category: 编程
 ---
 
 ## 1 背景

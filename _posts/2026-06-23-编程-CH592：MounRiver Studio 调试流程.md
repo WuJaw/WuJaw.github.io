@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "MounRiver Studio 调试流程"
+title: "CH592：MounRiver Studio 调试流程"
 date: 2026-06-23
-category: CH592
+category: 编程
 ---
 
 基于 CH592F 项目的 MounRiver Studio 调试完整流程记录。

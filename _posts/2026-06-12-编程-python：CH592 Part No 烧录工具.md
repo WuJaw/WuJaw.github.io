@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "CH592 Part No 烧录工具"
+title: "python：CH592 Part No 烧录工具"
 date: 2026-06-12
-category: python
+category: 编程
 ---
 
 ## 1 背景

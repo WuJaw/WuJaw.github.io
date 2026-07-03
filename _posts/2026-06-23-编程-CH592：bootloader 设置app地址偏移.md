@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "bootloader 设置偏移(待验证)"
+title: "CH592：bootloader 设置app地址偏移"
 date: 2026-06-23
-category: CH592
+category: 编程
 ---
 
 ## 1 APP 程序设置地址偏移

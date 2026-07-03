@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Jekyll 博客搭建全记录"
+title: "github pages &Jekyll 博客搭建全记录"
 date: 2026-07-03
 category: 博客
 ---

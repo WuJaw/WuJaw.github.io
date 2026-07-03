@@ -2,7 +2,7 @@
 layout: post
 title: "Microstation测试工具开发记录"
 date: 2026-07-01
-category: 工具
+category: python
 ---
 
 ## 1 概述

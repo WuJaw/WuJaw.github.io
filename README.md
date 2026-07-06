@@ -17,12 +17,11 @@ WuJaw.github.io/
 │
 ├── index.html               # 首页（分类卡片 + 实时搜索 + 暗号解锁）
 │
-├── _posts/                  # 博客文章（Markdown，共 27 篇）
+├── _posts/                  # 博客文章（Markdown，共 11 篇）
 │
 ├── assets/                  # 静态资源（图片统一放这里，含文章配图）
 │
 ├── tools/                   # 在线工具 + 第三方依赖
-│   ├── CRC16校验工具.html    #   CRC16 Modbus 在线计算
 │   ├── efr32容量剩余计算.html #  EFR32 芯片 Flash / RAM 容量估算
 │   ├── es.exe               #   Everything 命令行搜索工具
 │   └── extract.py           #   辅助脚本
@@ -38,13 +37,14 @@ WuJaw.github.io/
 │   ├── fix_img_reverse.py   #   Web 路径转 Typora 格式
 │   ├── launcher.py          #   工具启动器
 │   ├── submit_work_hours.py #   工时自动填报
-│   └── wch_isp_gui_enhanced.py # CH592 ISP 烧录 GUI
+│   ├── wch_isp_gui_enhanced.py # CH592 ISP 烧录 GUI
+│   └── part no.bin          #   CH592 烧录数据文件
 │
 ├── add_fm.bat               # 补齐 Front Matter
 ├── auto_number.bat          # 标题自动编号
 ├── autocommit.bat           # Git add + commit + push
 ├── compress.bat             # 图片压缩
-├── git_push.bat             # 单独 git push
+├── git_push.bat             # ★ 一键部署（auto_number → add_fm → fix_img → autocommit）
 ├── git_reset.bat            # Git 版本回退
 ├── git_rollback.bat         # Git 回滚
 ├── typora.bat               # 图片转 Typora 预览格式
@@ -63,8 +63,8 @@ Jekyll 核心配置：
 - **Markdown**：kramdown + GFM 输入模式
 - **语法高亮**：Rouge（Jekyll 内置），Tomorrow Night Eighties 主题
 - **文章 URL**：`/posts/:title/`
-- **功能开关**：搜索框、左侧站点目录、右侧文章 TOC、代码复制按钮，可通过 `features` 集中控制
-- **私密分类**：`secret_categories` 列出的分类需在搜索框输入暗号后才显示，支持 localStorage 持久化
+- **功能开关**：搜索框、站点目录、文章 TOC、代码复制按钮，可通过 `features` 集中控制
+- **私密分类**：`secret_categories` 列出「编程」「博客」两个分类，需在搜索框输入暗号后才显示，支持 localStorage 持久化
 
 ---
 
@@ -95,16 +95,16 @@ Jekyll 核心配置：
 
 文件名格式：`YYYY-MM-DD-分类-标题.md`，Front Matter 声明 `layout: post`。
 
-当前 **27 篇**，覆盖以下分类：
+当前 **11 篇**，覆盖以下分类：
 
-| 分类 | 内容 |
-|------|------|
-| **操作手册** | A1 蜂巢基站、蓝牙广播、console 操作、N9912A 频谱仪、OTA 升级、数分微站出厂测试、CH592 烧录 |
-| **基础知识** | CE 检测、SI446x 双路射频、Flash 地址、标签/输液监控器版本控制 |
-| **编程** | Git 自动提交、工时填报、周报 Excel、浏览器 Cookie、CH592 烧录/PNo/调试、BW16 驱动、数分微站测试 |
-| **工具** | 在线工具、常用工具官网 |
-| **github** | 仓库地址 |
-| **博客** | Jekyll 博客搭建全记录（含目录结构、配置、设计、图片处理、Front Matter 自动化、标题编号、语法高亮、搜索与暗号、TOC、Liquid 逃逸、Fork 部署、工具链） |
+| 分类 | 篇数 | 内容 |
+|------|------|------|
+| **操作手册** | 5 | A1 蜂巢基站、OTA 升级、数分微站出厂测试、CE/SRRC 认证测试、CH592 Part No 烧录 |
+| **编程** | 3 | BW16 驱动与处理逻辑、CH592 开发调试流程、Python 工时自动化工具链 |
+| **工具** | 2 | Git 自动提交脚本与常用仓库地址、常用工具下载地址 |
+| **博客** | 1 | GitHub Pages & Jekyll 博客搭建全记录 |
+
+其中「编程」和「博客」属于私密分类，需暗号解锁。
 
 ### 图片处理
 
@@ -138,6 +138,7 @@ Typora 写作时用 `![desc](../assets/xxx.png)` 预览，push 前运行 `web.ba
 | `launcher.py` | 工具启动器 |
 | `submit_work_hours.py` | 工时自动填报 |
 | `wch_isp_gui_enhanced.py` | CH592 ISP 烧录 GUI |
+| `part no.bin` | CH592 烧录数据文件 |
 
 ---
 

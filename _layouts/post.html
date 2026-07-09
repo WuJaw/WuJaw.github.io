@@ -15,7 +15,10 @@ layout: default
 <nav class="toc-panel" id="toc-panel" aria-label="文章大纲">
   <div class="toc-title">
     <span class="toc-title-text" id="toc-title-text">大纲</span>
-    <button class="toc-toggle-btn" id="toc-toggle-btn" onclick="toggleToc()" title="折叠/展开">▼</button>
+    <span class="toc-title-btns">
+      <button class="toc-toggle-all" id="toc-toggle-all" onclick="toggleAllToc()" title="全部折叠/展开">⇕</button>
+      <button class="toc-toggle-btn" id="toc-toggle-btn" onclick="toggleToc()" title="折叠/展开面板">▼</button>
+    </span>
   </div>
   <div class="toc-list" id="toc-list"></div>
 </nav>
@@ -28,8 +31,8 @@ layout: default
   var content = document.querySelector('.post-content');
   if (!panel || !tocList || !content) return;
 
-  // 收集 h2 / h3
-  var headings = Array.from(content.querySelectorAll('h2, h3'));
+  // 收集 h2 ~ h6
+  var headings = Array.from(content.querySelectorAll('h2, h3, h4, h5, h6'));
   if (headings.length < 2) { panel.style.display = 'none'; return; }
 
   // 给每个标题加 id（如果没有的话）
@@ -39,18 +42,60 @@ layout: default
     }
   });
 
-  // 构建 TOC HTML
-  var html = '<ul class="toc-list-inner">';
+  // 构建树形结构
+  var root = { children: [], level: 1 };
+  var stack = [root];
+
   headings.forEach(function (h) {
-    var cls = ' class="' + (h.tagName === 'H3' ? 'toc-h3' : 'toc-h2') + '"';
-    var text = h.textContent.trim();
-    html += '<li' + cls + '><a href="#' + h.id + '">' + text + '</a></li>';
+    var level = parseInt(h.tagName[1]);
+    var node = {
+      id: h.id,
+      text: h.textContent.trim(),
+      level: level,
+      children: []
+    };
+    while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+      stack.pop();
+    }
+    stack[stack.length - 1].children.push(node);
+    stack.push(node);
   });
-  html += '</ul>';
-  tocList.innerHTML = html;
+
+  // 递归渲染树
+  function renderTree(nodes) {
+    if (!nodes.length) return '';
+    var html = '<ul class="toc-list-inner">';
+    nodes.forEach(function (node) {
+      var hasChildren = node.children.length > 0;
+      var cls = 'toc-h' + node.level;
+      html += '<li class="' + cls + '">';
+      html += '<div class="toc-item">';
+      if (hasChildren) {
+        html += '<span class="toc-arrow" onclick="toggleTocNode(event, this)" title="折叠/展开">▼</span>';
+      } else {
+        html += '<span class="toc-arrow-placeholder"></span>';
+      }
+      html += '<a href="#' + node.id + '">' + node.text + '</a>';
+      html += '</div>';
+      if (hasChildren) {
+        html += '<div class="toc-children">';
+        html += renderTree(node.children);
+        html += '</div>';
+      }
+      html += '</li>';
+    });
+    html += '</ul>';
+    return html;
+  }
+
+  tocList.innerHTML = renderTree(root.children);
 
   // 高亮当前章节
-  var links = Array.from(panel.querySelectorAll('a'));
+  var allLinks = Array.from(panel.querySelectorAll('.toc-item a'));
+  var headingIdx = {};
+  headings.forEach(function (h, i) {
+    headingIdx[h.id] = i;
+  });
 
   function onScroll() {
     var scrollY = window.scrollY || window.pageYOffset;
@@ -61,8 +106,10 @@ layout: default
         break;
       }
     }
-    links.forEach(function (a, i) {
-      a.classList.toggle('active', i === active);
+    allLinks.forEach(function (a) {
+      var hid = a.getAttribute('href').slice(1);
+      var idx = headingIdx[hid] !== undefined ? headingIdx[hid] : -1;
+      a.classList.toggle('active', idx === active);
     });
   }
 
@@ -70,7 +117,7 @@ layout: default
   onScroll();
 
   // 平滑跳转
-  links.forEach(function (a) {
+  allLinks.forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
       var target = document.getElementById(a.getAttribute('href').slice(1));
@@ -80,11 +127,44 @@ layout: default
     });
   });
 
-  // 折叠/展开切换
-  window.toggleToc = function() {
+  // 折叠/展开单个节点
+  window.toggleTocNode = function (e, arrow) {
+    e.stopPropagation();
+    var li = arrow.closest('li');
+    var children = li.querySelector(':scope > .toc-children');
+    if (children) {
+      children.classList.toggle('collapsed');
+      arrow.classList.toggle('collapsed');
+    }
+  };
+
+  // 折叠/展开整个大纲面板
+  window.toggleToc = function () {
     tocList.classList.toggle('collapsed');
     var btn = document.getElementById('toc-toggle-btn');
     if (btn) btn.classList.toggle('collapsed');
+  };
+
+  // 一键全部折叠/展开
+  window.toggleAllToc = function () {
+    var arrows = tocList.querySelectorAll('.toc-arrow');
+    var anyExpanded = false;
+    arrows.forEach(function (a) {
+      if (!a.classList.contains('collapsed')) anyExpanded = true;
+    });
+    arrows.forEach(function (a) {
+      var li = a.closest('li');
+      var children = li.querySelector(':scope > .toc-children');
+      if (children) {
+        if (anyExpanded) {
+          children.classList.add('collapsed');
+          a.classList.add('collapsed');
+        } else {
+          children.classList.remove('collapsed');
+          a.classList.remove('collapsed');
+        }
+      }
+    });
   };
 })();
 </script>

@@ -556,7 +556,14 @@
 
   .toc-title-text { cursor: pointer; }
 
-  .toc-toggle-btn {
+  .toc-title-btns {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .toc-toggle-btn,
+  .toc-toggle-all {
     cursor: pointer;
     font-size: var(--fs-caption);
     color: var(--quiet);
@@ -567,7 +574,8 @@
     transition: color 0.15s, transform 0.3s;
   }
 
-  .toc-toggle-btn:hover { color: var(--ink); }
+  .toc-toggle-btn:hover,
+  .toc-toggle-all:hover { color: var(--ink); }
   .toc-toggle-btn.collapsed { transform: rotate(-90deg); }
 
   .toc-list {
@@ -653,20 +661,86 @@
     max-height: 2000px;
   }
 
-  /* h2 — 分类/大标题（两侧一致） */
-  .toc-list .toc-h2 > a {
+  /* === 文章大纲 — 树形折叠结构 === */
+  .toc-panel .toc-list-inner {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-panel .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+  }
+
+  .toc-panel .toc-item > a {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toc-panel .toc-arrow {
+    display: inline-block;
+    font-size: 9px;
+    line-height: 1;
+    color: var(--quiet);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s, color 0.15s;
+    user-select: none;
+    width: 9px;
+    text-align: center;
+  }
+
+  .toc-panel .toc-arrow:hover { color: var(--ink); }
+  .toc-panel .toc-arrow.collapsed { transform: rotate(-90deg); }
+
+  .toc-panel .toc-arrow-placeholder {
+    display: inline-block;
+    width: 9px;
+    flex-shrink: 0;
+  }
+
+  .toc-panel .toc-children {
+    padding-left: 8px;
+    overflow: hidden;
+    max-height: 5000px;
+    transition: max-height 0.3s ease, opacity 0.2s;
+  }
+
+  .toc-panel .toc-children.collapsed {
+    max-height: 0 !important;
+    opacity: 0;
+  }
+
+  /* 层级样式 — h2 ~ h6 */
+  .toc-panel .toc-h2 > .toc-item > a {
     padding-top: 10px;
     color: var(--ink);
     font-weight: 600;
     font-size: var(--fs-small);
   }
 
-  /* 站点目录/文章大纲 — h3 缩进 */
-  .toc-list .toc-h3 > a {
-    padding-left: 12px;
+  .toc-panel .toc-h3 > .toc-item > a {
     font-size: var(--fs-meta);
   }
 
+  .toc-panel .toc-h4 > .toc-item > a {
+    font-size: var(--fs-meta);
+    color: var(--quiet);
+  }
+
+  .toc-panel .toc-h5 > .toc-item > a {
+    font-size: var(--fs-caption);
+    color: var(--quiet);
+  }
+
+  .toc-panel .toc-h6 > .toc-item > a {
+    font-size: var(--fs-caption);
+    color: var(--quiet);
+  }
+
+  /* 站点目录 — h3 缩进 */
   .toc-sub-list .toc-h3 > a {
     padding-left: 16px;
     font-size: var(--fs-meta);

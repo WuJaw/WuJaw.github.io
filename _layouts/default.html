@@ -101,6 +101,14 @@
     display: list-item;
   }
 
+  /* 隐藏整个秘密分类组（未解锁时） */
+  .toc-cat-group.secret-cat {
+    display: none;
+  }
+  body.secret-unlocked .toc-cat-group.secret-cat {
+    display: block;
+  }
+
   /* ========== 分类索引页 ========== */
   .category-index {
     display: flex;
@@ -809,7 +817,7 @@ if (localStorage.getItem('secret_unlocked') === '1') {
       {% if site.secret_categories contains cat_name %}
       {% assign is_secret_cat = true %}
       {% endif %}
-    <div class="toc-cat-group{% if is_active_cat %} open{% endif %}">
+    <div class="toc-cat-group{% if is_active_cat %} open{% endif %}{% if is_secret_cat %} secret-cat{% endif %}">
       <span class="toc-cat-toggle">
         <span class="toc-cat-arrow" onclick="toggleCatGroup(this)">▶</span><span class="toc-cat-link">{{ cat_name }}</span>
       </span>

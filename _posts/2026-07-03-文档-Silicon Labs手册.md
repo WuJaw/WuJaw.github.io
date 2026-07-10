@@ -31,8 +31,9 @@ category: 文档
 
 | 文档 | 说明 |
 |------|------|
-| [Simplicity Studio](https://www.silabs.com/developer-tools/simplicity-studio) | 官方 IDE，集成 SDK 管理、外设配置、协议栈管理、调试抓包 |
-| [Gecko SDK 文档](https://docs.silabs.com/gecko-platform/) | Gecko SDK API 文档，含 RAIL、BLE、外设驱动等 |
-| [RAIL Library 指南](https://docs.silabs.com/rail/latest/) | RAIL 射频抽象层 API 文档，专有协议开发核心参考 |
-| [Bluetooth SDK 文档](https://docs.silabs.com/bluetooth/latest/) | BLE 协议栈 API 文档，蓝牙开发核心参考 |
+| [Simplicity Studio v6](https://www.silabs.com/software-and-tools/simplicity-studio?tab=getting-started) | 官方 IDE，集成 SDK 管理、外设配置、协议栈管理、调试抓包，最新版本 |
+| [Simplicity Studio v5](https://www.silabs.com/software-and-tools/simplicity-studio/simplicity-studio-version-5) | 官方 IDE，集成 SDK 管理、外设配置、协议栈管理、调试抓包，目前大量使用 |
+| Simplicity Studio v4 | 物联网系列产品使用较多,官网已经不能下载  Q群：785774010  进群密码：wuergou |
+| [gecko_sdk](https://github.com/SiliconLabs/gecko_sdk.git) | v5 版本的sdk包 |
+| [simplicity_sdk](https://github.com/SiliconLabs/simplicity_sdk.git) | v6 版本的sdk包 |
 

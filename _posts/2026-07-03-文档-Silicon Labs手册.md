@@ -36,4 +36,6 @@ category: 文档
 | Simplicity Studio v4 | 物联网系列产品使用较多,官网已经不能下载  Q群：785774010  进群密码：wuergou |
 | [gecko_sdk](https://github.com/SiliconLabs/gecko_sdk.git) | v5 版本的sdk包 |
 | [simplicity_sdk](https://github.com/SiliconLabs/simplicity_sdk.git) | v6 版本的sdk包 |
+| [application_examples](https://github.com/SiliconLabs/application_examples) | 程序示例 |
+| [Si Connect](https://www.silabs.com/software-and-tools/simplicity-connect-mobile-app?tab=downloads) | 苹果或者谷歌商店下载 手机上调试蓝牙功能的软件 或则  Q群 |
 

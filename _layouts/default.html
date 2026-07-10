@@ -491,6 +491,7 @@
 
   .post-content table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     margin: 1rem 0;
     font-size: var(--fs-small);
@@ -501,6 +502,8 @@
     border: 1px solid var(--line);
     padding: var(--space-sm) var(--space-md);
     text-align: left;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .post-content th {
@@ -510,9 +513,8 @@
   }
 
   .post-content th:first-child,
-  .post-content td:first-child,
-  .post-content th:nth-child(2),
-  .post-content td:nth-child(2) {
+  .post-content td:first-child {
+    width: 200px;
     white-space: nowrap;
   }
 

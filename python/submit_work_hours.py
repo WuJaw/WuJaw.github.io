@@ -151,12 +151,15 @@ def read_excel(path):
     import pandas as pd
     df = pd.read_excel(path, header=0)
     records = []
+    last_date = None  # 上一行有效日期，用于"事假+半天办公"同日拆分的日期继承
     for _, row in df.iterrows():
         date_val = row.iloc[1]
         status = row.iloc[2]
         project_code = row.iloc[3]
         work_content = row.iloc[4]
         note = row.iloc[5]
+        # 约最大天数（G列）：1=全天 0.5=半天，缺省按全天
+        day_frac = row.iloc[6] if len(row) > 6 else None
 
         # 跳过非数据行："下周工作计划"/"本周工作重点" 可能出现在列0或列1
         col0 = str(row.iloc[0]).strip()
@@ -164,22 +167,27 @@ def read_excel(path):
         if col0 in ('下周工作计划', '本周工作重点') or col1 in ('下周工作计划', '本周工作计划'):
             continue
 
-        if pd.isna(date_val):
-            continue
+        # 日期解析：本行缺失则沿用上一行（半天行往往不填日期，跟随前一行事假同日）
+        if pd.notna(date_val):
+            if isinstance(date_val, datetime):
+                date_str = date_val.strftime('%Y-%m-%d')
+            else:
+                raw = str(date_val).strip()
+                # 统一将 "." 和 "/" 替换为 "-" 再解析
+                normalized = raw.replace('.', '-').replace('/', '-')
+                try:
+                    date_str = datetime.strptime(normalized[:10], '%Y-%m-%d').strftime('%Y-%m-%d')
+                except ValueError:
+                    date_str = None
+            if date_str:
+                last_date = date_str
+        elif last_date:
+            date_str = last_date
+        else:
+            continue  # 既无本行日期也无前序日期，跳过
+
         if pd.isna(status):
             continue
-
-        # 日期解析：兼容 datetime 对象和 "2026.1.1" / "2026-01-01" 字符串
-        if isinstance(date_val, datetime):
-            date_str = date_val.strftime('%Y-%m-%d')
-        else:
-            raw = str(date_val).strip()
-            # 统一将 "." 和 "/" 替换为 "-" 再解析
-            normalized = raw.replace('.', '-').replace('/', '-')
-            try:
-                date_str = datetime.strptime(normalized[:10], '%Y-%m-%d').strftime('%Y-%m-%d')
-            except ValueError:
-                continue  # 无法解析的日期行，跳过
 
         status = str(status).strip()
 
@@ -190,8 +198,18 @@ def read_excel(path):
         content = str(work_content).strip() if pd.notna(work_content) else ''
         note_str = str(note).strip() if pd.notna(note) else ''
 
+        # 约最大天数 → 工时(小时)：全天=8h，半天=4h，缺省按全天 8h
+        frac = 1.0
+        if pd.notna(day_frac):
+            fs = str(day_frac).strip()
+            if fs:
+                try:
+                    frac = float(fs)
+                except ValueError:
+                    frac = 1.0
+        duration = int(round(frac * 8))
+
         if status in WORK_STATUS:
-            duration = 8
             matters = content
             if note_str and note_str not in ('休息', ''):
                 matters = (matters + '\n' + note_str) if matters else note_str
@@ -200,7 +218,6 @@ def read_excel(path):
         elif status in REST_STATUS:
             continue  # skip rest days
         else:
-            duration = 8
             matters = content if content else status
 
         records.append({

@@ -1257,10 +1257,10 @@ class LauncherApp(tk.Tk):
                 self._log(f"与蓝牙标签信号弱：中位数 {median:+d} dBm < 阈值 {tag_thresh:+d} dBm", "warn")
 
     # ─────────────────────────────────────────
-    # Excel 写入
+    # Excel 写入（已修改为不覆盖，始终追加）
     # ─────────────────────────────────────────
     def _write_to_excel(self, mobile_bt="", timeout_remarks=None):
-        """将测试结果写入 Excel 的第一个工作表
+        """将测试结果写入 Excel 的第一个工作表（始终追加新行）
         timeout_remarks: 超时模式下只写编号和备注，跳过信号强度列"""
         filepath = getattr(self, "_excel_fullpath", "")
         if not filepath or not os.path.isfile(filepath):
@@ -1287,80 +1287,19 @@ class LauncherApp(tk.Tk):
             for ci, h in enumerate(headers, 1):
                 sheet.cell(row=1, column=ci, value=h)
 
-        # ── 编号：取数分微站号（去空格） ──
-        sid = self.var_station_id.get().replace(" ", "")
-
-        # 辅助：判断一行是否完全为空（5 列全 None）
+        # ── 辅助：判断一行是否完全为空 ──
         def _row_empty(r):
-            for c in range(1, 6):
+            for c in range(1, len(headers) + 1):
                 if sheet.cell(row=r, column=c).value is not None:
                     return False
             return True
 
-        # 辅助：判断一行是否有任何数据
-        def _row_has_data(r):
-            for c in range(1, 6):
-                if sheet.cell(row=r, column=c).value is not None:
-                    return True
-            return False
-
-        # ── 第一遍：收集要删除的行号 + 记录覆盖位置 ──
-        to_delete = set()
-        overwrite_row = None
+        # ── 始终追加到末尾（找到第一个空行） ──
         row_idx = 2
-        while True:
-            # 先判断当前行是否完全为空
-            if _row_empty(row_idx):
-                # 再确认下方是否还有数据，如果有说明这是夹在中间的空行
-                has_below = False
-                check_r = row_idx + 1
-                while True:
-                    if check_r > sheet.max_row:
-                        break
-                    if _row_has_data(check_r):
-                        has_below = True
-                        break
-                    check_r += 1
-                if has_below:
-                    # 夹在中间的空行，标记删除
-                    to_delete.add(row_idx)
-                    row_idx += 1
-                    continue
-                else:
-                    # 已经是末尾连续空行，退出扫描
-                    break
-
-            # 有数据的行：检查是否重复编号
-            val_a = sheet.cell(row=row_idx, column=1).value
-            if val_a is not None and str(val_a).replace(" ", "") == sid:
-                # 匹配到重复编号，记住位置，不删除（稍后覆盖写入）
-                overwrite_row = row_idx
+        while not _row_empty(row_idx):
             row_idx += 1
 
-        # ── 第二遍：从后往前删除空行，避免索引变化 ──
-        for r in sorted(to_delete, reverse=True):
-            sheet.delete_rows(r)
-
-        # 如果匹配行在被删除的空行之后，需要修正行号
-        if overwrite_row is not None:
-            deleted_before = sum(1 for d in to_delete if d < overwrite_row)
-            overwrite_row -= deleted_before
-
-        # ── 第三遍：确定写入行 ──
-        if overwrite_row is not None:
-            # 覆盖写入已有行
-            row_idx = overwrite_row
-            is_overwrite = True
-            # 先清空该行旧数据
-            for ci in range(1, 6):
-                sheet.cell(row=row_idx, column=ci, value=None)
-        else:
-            # 找到末尾空行追加
-            row_idx = 2
-            while not _row_empty(row_idx):
-                row_idx += 1
-            is_overwrite = False
-
+        sid = self.var_station_id.get().replace(" ", "")
         row_data = [sid if sid else row_idx, "", "", "", ""]
         sheet.cell(row=row_idx, column=1, value=row_data[0])
 
@@ -1421,11 +1360,10 @@ class LauncherApp(tk.Tk):
             for c in range(1, len(headers) + 1):
                 sheet.cell(row=r, column=c).alignment = Alignment(horizontal="right")
 
-        action_text = "覆盖写入" if is_overwrite else "写入"
         # ── 构建日志展示内容 ──
         log_lines = [
             "────────────── 写入内容 ──────────────",
-            f"行号：{row_idx}" + ("（覆盖已有数据）" if is_overwrite else ""),
+            f"行号：{row_idx}（追加新行）",
             f"编号：{row_data[0]}",
             f"与基站信号强度：{row_data[1] or '—'}",
             f"与蓝牙标签信号强度：{row_data[2] or '—'}",
@@ -1435,7 +1373,7 @@ class LauncherApp(tk.Tk):
 
         try:
             wb.save(filepath)
-            self._log(f"数据已{action_text} {os.path.basename(filepath)} 第 {row_idx} 行", "ok")
+            self._log(f"数据已追加到 {os.path.basename(filepath)} 第 {row_idx} 行", "ok")
             self.btn_retry.pack_forget()
         except PermissionError:
             # 文件被占用（Excel 打开中）
@@ -1461,7 +1399,7 @@ class LauncherApp(tk.Tk):
         self._log("正在重新写入…", "info")
         try:
             wb.save(filepath)
-            self._log(f"数据已写入 {os.path.basename(filepath)} 第 {row_idx} 行", "ok")
+            self._log(f"数据已追加到 {os.path.basename(filepath)} 第 {row_idx} 行", "ok")
             self._pending_write_data = None
             self.btn_retry.pack_forget()
         except PermissionError:

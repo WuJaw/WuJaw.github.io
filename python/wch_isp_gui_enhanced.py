@@ -16,6 +16,7 @@ CH592 Part no 烧录工具
 """
 
 import re
+import sys
 import json
 import tkinter as tk
 from tkinter import ttk
@@ -23,6 +24,16 @@ from tkinter import messagebox
 from pathlib import Path
 from typing import Optional
 from dataclasses import dataclass, field, asdict
+
+
+def get_app_dir() -> Path:
+    """获取应用所在目录（兼容 pyinstaller 打包后的 exe）"""
+    if getattr(sys, 'frozen', False):
+        # pyinstaller 打包后的 exe 运行环境
+        return Path(sys.executable).parent
+    else:
+        # 普通 Python 脚本运行环境
+        return Path(__file__).parent
 
 
 # ============================================================================
@@ -159,7 +170,7 @@ class WCHISPGUIEnhanced:
 
         # 配置
         self.config = AppConfig()
-        self.config_file = Path("config.json")
+        self.config_file = get_app_dir() / "config.json"
         self.load_config()
 
         # 窗体监控状态
@@ -189,7 +200,7 @@ class WCHISPGUIEnhanced:
         self.var_little_endian.set(0 if self.config.serial.byte_order == 'big' else 1)
 
         # 创建/覆盖 part no.bin 写入初始值
-        sn_file = Path(__file__).parent / "part no.bin"
+        sn_file = get_app_dir() / "part no.bin"
         try:
             order = 'little' if self.var_little_endian.get() == 1 else 'big'
             prefix_val = int(self.config.serial.prefix, 16) if self.config.serial.prefix else 0
@@ -472,7 +483,7 @@ class WCHISPGUIEnhanced:
             combined_str = prefix + str(suffix).zfill(5)
             val = int(combined_str, 16)
             order = 'little' if self.var_little_endian.get() == 1 else 'big'
-            sn_file = Path(__file__).parent / "part no.bin"
+            sn_file = get_app_dir() / "part no.bin"
             with open(sn_file, 'wb') as f:
                 f.write(val.to_bytes(4, byteorder=order))
         except:

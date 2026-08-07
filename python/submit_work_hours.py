@@ -161,19 +161,20 @@ def read_excel(path):
         # 约最大天数（G列）：1=全天 0.5=半天，缺省按全天
         day_frac = row.iloc[6] if len(row) > 6 else None
 
-        # 跳过非数据行："下周工作计划"/"本周工作重点" 可能出现在列0或列1
-        col0 = str(row.iloc[0]).strip()
-        col1 = str(date_val).strip() if pd.notna(date_val) else ''
-        if col0 in ('下周工作计划', '本周工作重点') or col1 in ('下周工作计划', '本周工作计划'):
+        # 跳过非数据行："本周工作重点"/"下周工作计划" 分隔行可能出现在列0/列1/列2
+        sep_phrases = {'下周工作计划', '本周工作重点', '本周工作计划'}
+        row_head = [str(row.iloc[i]).strip() for i in range(min(3, len(row)))]
+        if any(c in sep_phrases for c in row_head):
             continue
 
-        # 日期解析：本行缺失则沿用上一行（半天行往往不填日期，跟随前一行事假同日）
+        # 日期解析：本行缺失或无有效值时沿用上一行（半天/分隔行往往不填日期）
+        date_str = None
         if pd.notna(date_val):
             if isinstance(date_val, datetime):
                 date_str = date_val.strftime('%Y-%m-%d')
             else:
                 raw = str(date_val).strip()
-                # 统一将 "." 和 "/" 替换为 "-" 再解析
+                # 统一将 "." 和 "/" 替换为 "-" 再解析（兼容 2026.1.1 / 2026/1/1）
                 normalized = raw.replace('.', '-').replace('/', '-')
                 try:
                     date_str = datetime.strptime(normalized[:10], '%Y-%m-%d').strftime('%Y-%m-%d')
@@ -181,10 +182,11 @@ def read_excel(path):
                     date_str = None
             if date_str:
                 last_date = date_str
-        elif last_date:
-            date_str = last_date
-        else:
-            continue  # 既无本行日期也无前序日期，跳过
+        if not date_str:
+            if last_date:
+                date_str = last_date
+            else:
+                continue  # 既无本行有效日期也无前序日期，跳过
 
         if pd.isna(status):
             continue
